@@ -13,6 +13,12 @@
             </div>
         @endif
 
+        @if(session('success'))
+            <div class="bg-green-500 text-white p-4 rounded-lg mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+
     @php
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles();
@@ -58,7 +64,7 @@
              <div class="flex flex-row justify-center tw-flex-row h-150 -m-2">
 
                 @foreach ($people as $person)
-                <a href="{{ route('update.selected.items', ['people_id' => $person->id]) }}" class="relative ml-2">
+                <!-- <a href="{{ route('update.selected.items', ['people_id' => $person->id]) }}" class="relative ml-2"> -->
                     @csrf
                   <div class="p-2 h-full lg:w-1/3 md:w-full flex">
                    <div class="slide height:auto  border-2 p-2 p-4 w-full md:w-64 lg:w-100 rounded-lg bg-white">
@@ -80,8 +86,7 @@
                      
                      </style>
                      
-                     <!--<a href="{{ url('chart/'.$person->id.'/edit') }}" class="relative  ml-2">-->
-                     <!--                                            @csrf-->
+                     <a href="{{ url('people/'.$person->id.'/edit') }}" class="relative  ml-2">
 
                       <div class="h-30 flex flex-row items-center rounded-lg bg-white width:100vw relative z-0">
                           <!--ハンバーガーメニューが表示された時は、下に表示されるようz-0をつける-->
@@ -103,7 +108,11 @@
                                  </style>
                                         <div class="flex-grow">
                                           <h2 class="h2 text-gray-900 title-font font-bold text-2.5xl" _msttexthash="277030">{{$person->person_name}}</h2>
-                                          <p class="text-gray-900 font-bold text-xs" _msttexthash="150072">{{$person->date_of_birth}}生まれ</p>
+                                          <p class="text-gray-900 font-bold text-xs inline-flex items-center" _msttexthash="150072">{{$person->date_of_birth}}生まれ</p>
+                        </a>
+                                          <a href="{{ route('update.selected.items', ['people_id' => $person->id]) }}" class="ml-2 px-2 py-1 bg-gray-600 text-white rounded hover:bg-gray-500">
+                                            記録アイテムの変更
+                                          </a>
                                         </div>
                       </div>
                       

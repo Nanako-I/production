@@ -179,17 +179,20 @@ public function change(Request $request, $people_id, $id)
             return redirect()->back()->withErrors($validator)->withInput();
         }
       
-    //データ更新
+        //データ更新
         $kyuuin = Kyuuin::find($request->id);
         // 画像がアップロードされているかチェック
         if ($request->hasFile('filename')) {
             $request->validate([
                 'filename' => 'image|max:2048', // ファイルのバリデーション
             ]);
+
+            // 古い画像ファイルが存在する場合は削除
+            if ($kyuuin->path && \Storage::exists($kyuuin->path)) {
+                \Storage::delete($kyuuin->path);
+            }
     
             $directory = 'public/sample/kyuuin_photo';
-            // $filename = uniqid() . '.' . $request->file('filename')->getClientOriginalExtension();
-            // $filename = $request->file('filename')->getClientOriginalName();	
             
             // 同じファイル名でも上書きされないようユニークなIDをファイル名に追加
             $uniqueId = uniqid();
@@ -202,21 +205,20 @@ public function change(Request $request, $people_id, $id)
             // 更新されたファイル名とパスをセット
             $kyuuin->filename = $filename;
             $kyuuin->path = $filepath;
-            // dd($kyuuin);
-            // ↑ここでは$filename　$filepathどちらも取れている
+           
             
      }
         // 他のデータを更新
-    $kyuuin->fill($request->except(['filename']));
-    $kyuuin->save();
+            $kyuuin->fill($request->except(['filename']));
+            $kyuuin->save();
 
-    // セッショントークンを再生成
-    $request->session()->regenerateToken();
+            // セッショントークンを再生成
+            $request->session()->regenerateToken();
 
-    $people = Person::all();
+            $people = Person::all();
 
-    return view('people', compact('kyuuin', 'people'));
-}
+            return view('people', compact('kyuuin', 'people'));
+        }
 
 
     /**
@@ -225,12 +227,21 @@ public function change(Request $request, $people_id, $id)
      * @param  \App\Models\Food  $food
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        $kyuuin = Kyuuin::find($id);
-    if ($kyuuin) {
-        $kyuuin->delete();
-    }
-        return redirect()->route('people.index');
-    }
+    public function destroy($id) 
+        {
+            $kyuuin = Kyuuin::find($id);
+        
+            if ($kyuuin) {
+        
+                // 画像ファイルが存在する場合、削除
+                if ($kyuuin->path && \Storage::exists($kyuuin->path)) {
+                    \Storage::delete($kyuuin->path);
+                }
+        
+                // Tubeを削除
+                $kyuuin->delete();
+            }
+        
+            return redirect()->route('people.index')->with('success', '削除が完了しました。');
+        }
 }

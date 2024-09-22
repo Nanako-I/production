@@ -184,17 +184,22 @@ public function change(Request $request, $people_id, $id)
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-    //データ更新
+        
+        //データ更新
         $tube = Tube::find($request->id);
         // 画像がアップロードされているかチェック
         if ($request->hasFile('filename')) {
             $request->validate([
                 'filename' => 'image|max:2048', // ファイルのバリデーション
             ]);
+
+            // 古い画像ファイルが存在する場合は削除
+            if ($tube->path && \Storage::exists($tube->path)) {
+                \Storage::delete($tube->path);
+            }
     
             $directory = 'public/sample/tube_photo';
-            // $filename = uniqid() . '.' . $request->file('filename')->getClientOriginalExtension();
-            // $filename = $request->file('filename')->getClientOriginalName();
+            
             
             // 同じファイル名でも上書きされないようユニークなIDをファイル名に追加
             $uniqueId = uniqid();
@@ -228,13 +233,24 @@ public function change(Request $request, $people_id, $id)
      * @param  \App\Models\Food  $food
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    
        
-        $tube = Tube::find($id);
-    if ($tube) {
-        $tube->delete();
-    }
-        return redirect()->route('people.index');
-    }
+        public function destroy($id) 
+        {
+            $tube = Tube::find($id);
+        
+            if ($tube) {
+        
+                // 画像ファイルが存在する場合、削除
+                if ($tube->path && \Storage::exists($tube->path)) {
+                    \Storage::delete($tube->path);
+                }
+        
+                // Tubeを削除
+                $tube->delete();
+            }
+        
+            return redirect()->route('people.index')->with('success', '削除が完了しました。');
+        }
+        
 }

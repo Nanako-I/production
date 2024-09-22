@@ -1,99 +1,80 @@
-<!-- resources/views/books.blade.php -->
+<!-- resources/views/edit_person.blade.php -->
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 <x-app-layout>
 
     <!--ヘッダー[START]-->
-     <form action="{{ url('people' ) }}" method="POST" class="w-full max-w-lg">
-                        @method('PATCH')
-                        @csrf
-    <h2>{{$person->person_name}}さんの画面</h2>
-    </form>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight" style="width: 100%;">
+            {{ __('利用者情報の修正') }}
+        </h2>
+    </x-slot>
     <!--ヘッダー[END]-->
+
+    <!-- バリデーションエラーの表示 -->
+    @if ($errors->any())
+        <div class="flex justify-between p-4 items-center bg-red-500 text-white rounded-lg border-2 border-white">
+            @if ($errors->has('name') || $errors->has('date_of_birth'))
+                <div><strong>氏名・生年月日は入力必須です。</strong></div> 
+            @endif
+            @if ($errors->has('duplicate_name_dob'))
+                <div><strong>{{ $errors->first('duplicate_name_dob') }}</strong></div>
+            @endif
+            @if ($errors->has('duplicate_jukyuusha_number'))
+                <div><strong>{{ $errors->first('duplicate_jukyuusha_number') }}</strong></div>
+            @elseif ($errors->has('jukyuusha_number'))
+                <div><strong>受給者証番号は10桁で入力してください。</strong></div>
+            @endif
+        </div>
+    @endif
+
+    <body class="h-full w-full">
+
+    <!-- 修正フォーム -->
+    <form action="{{ route('people.update', $person->id) }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        @method('PATCH')
+
+        <div style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
+            <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
+                <label class="block text-lg font-bold text-gray-700">名前</label>
+                <input name="person_name" type="text" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-xl font-bold border-gray-300 rounded-md" value="{{ old('person_name', $person->person_name) }}" placeholder="名前">
+            </div>
             
-        <!-- バリデーションエラーの表示に使用-->
-       <!-- resources/views/components/errors.blade.php -->
-        @if (count($errors) > 0)
-            <!-- Form Error List -->
-            <div class="flex justify-between p-4 items-center bg-red-500 text-white rounded-lg border-2 border-white">
-                <div><strong>入力した文字を修正してください。</strong></div> 
-                <div>
-                    <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                    </ul>
+            <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
+                <label class="block text-lg font-bold text-gray-700">生年月日</label>
+                <input name="date_of_birth" type="date" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-xl font-bold border-gray-300 rounded-md" value="{{ old('date_of_birth', $person->date_of_birth) }}" placeholder="生年月日">
+            </div>
+
+            <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
+                <label class="block text-lg font-bold text-gray-700">受給者証番号</label>
+                <input name="jukyuusha_number" type="text" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-xl font-bold border-gray-300 rounded-md" value="{{ old('jukyuusha_number', $person->jukyuusha_number) }}" placeholder="受給者番号">
+            </div>
+
+            <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
+                <label class="block text-lg font-bold text-gray-700">医療的ケア</label>
+                <input name="medical_care" type="checkbox" value="1" class="mt-1" {{ $person->medical_care ? 'checked' : '' }}>
+                <span class="text-gray-500">医療的ケアを必要とする場合はチェックしてください</span>
+            </div>
+
+            <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
+                <label class="block text-lg font-bold text-gray-700">プロフィール画像</label>
+                <input name="filename" id="filename" type="file" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-lg border-gray-300 rounded-md ml-20">
+                @if ($person->filename)
+                    <div class="mt-2">
+                        <img src="{{ asset('storage/' . $person->filename) }}" alt="プロフィール画像" style="max-width: 150px;">
+                    </div>
+                @endif
+            </div>
+
+            <div class="flex flex-col col-span-1">
+                <div class="text-gray-700 text-center px-4 py-2 m-2">
+                    <button type="submit" class="inline-flex items-center px-6 py-3 bg-gray-800 border border-transparent rounded-md font-semibold text-lg text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                        更新する
+                    </button>
                 </div>
             </div>
-        @endif
-    
-    
-        <form action="{{ url('people' ) }}" method="POST" class="w-full max-w-lg">
-                        @method('PATCH')
-                        @csrf
-                        
-            <div class="container mx-auto flex px-5 py-24 md:flex-row flex-col items-center" _msthidden="5">
-                <div class="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center" _msthidden="4">
-                    <h1 class="title-font sm:text-4xl text-5xl mb-4 font-medium text-gray-900" _msttexthash="1004770" _msthidden="1" _msthash="63">{{$person->person_name}}
-                    </h1>
-                            <p class="mb-8 leading-relaxed" _msttexthash="26864591" _msthidden="1" _msthash="64">{{$person->date_of_birth}}生まれ</p>
-                            <p class="mb-8 leading-relaxed" _msttexthash="26864591" _msthidden="1" _msthash="64">{{$person->gender}}</p>
-                            <p class="mb-8 leading-relaxed" _msttexthash="26864591" _msthidden="1" _msthash="64">{{$person->disability_name}}</p>
-                </div>      
-    
-            </div>          
-                      
-                        <!--<div class="flex flex-col px-2 py-2">-->
-                           <!-- カラム１ -->
-                            <!--<div class="w-full md:w-1/1 px-3 mb-2 md:mb-0">-->
-            
-                       
-        </form>
         </div>
-    </div>
-        <!--左エリア[END]--> 
-         
-         <form action="{{ url('temperature/'.$person->id.'/edit') }}" method="GET">
-            @csrf
-                <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-lg mr-4">
-                体温をはかる
-                </button>
-        </form>       
-                      
-                                            
-       <form action="{{ url('food/'.$person->id.'/edit') }}" method="GET">
-            @csrf
-                <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-lg mr-4">
-                食事のきろく
-                </button>
-        </form>  
-        
-         <form action="{{ url('toilet/'.$person->id.'/edit') }}" method="GET">
-            @csrf
-                <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-lg mr-4">
-                トイレのきろく
-                </button>
-        </form> 
-        
-         <form action="{{ url('speech/'.$person->id.'/edit') }}" method="GET">
-            @csrf
-                <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-lg mr-4">
-                活動きろく
-                </button>
-        </form> 
-        
-        <form action="{{ url('record/'.$person->id.'/edit') }}" method="GET">
-            @csrf
-                <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg text-lg mr-4">
-                ケースきろく
-                </button>
-        </form> 
-        
-        
-    <!--右側エリア[START]-->
-    <div class="flex-1 text-gray-700 text-left bg-blue-100 px-4 py-2 m-2">
-         <!-- 現在の本 -->
-        
-    <!--右側エリア[[END]--> 
-</div>
- <!--全エリア[END]-->
- 
+    </form>
+
+    </body>
 </x-app-layout>

@@ -160,7 +160,7 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
      <script src="https://kit.fontawesome.com/de653d534a.js" crossorigin="anonymous"></script>
 
-@if(isset($temperaturesOnSelectedDate))
+     @if($temperaturesOnSelectedDate->count() > 0)
 <body>
 <table style="width: 100%; border-collapse: collapse; border: 1px solid #000;">
   <thead>

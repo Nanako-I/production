@@ -22,7 +22,8 @@ return new class extends Migration
             $table->string('gender')->nullable();
             $table->string('profile_image')->nullable();
             $table->text('disability_name')->nullable();//追記
-		  $table->integer('jukyuusha_number');
+		  $table->bigInteger('jukyuusha_number');
+          $table->boolean('medical_care')->default(false)->nullable();
 		  $table->integer('kubun_number');
           $table->string('filename')->nullable();
           $table->string('path')->nullable();

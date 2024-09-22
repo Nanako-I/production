@@ -53,6 +53,13 @@
         <label class="block text-lg font-bold text-gray-700">受給者証番号</label>
         <input name="jukyuusha_number" type="text" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-xl font-bold border-gray-300 rounded-md" placeholder="受給者番号">
       </div>
+
+      <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
+          <label class="block text-lg font-bold text-gray-700">医療的ケア</label>
+          <input name="medical_care" type="checkbox" value="1" class="mt-1">
+          <span class="text-gray-500">医療的ケアを必要とする場合はチェックしてください</span>
+      </div>
+
   
 
         <div class="form-group mb-4 m-2" style="display: flex; flex-direction: column; align-items: center;">
