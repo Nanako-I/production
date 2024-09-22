@@ -94,10 +94,17 @@ class RolesAndPermissionsSeeder extends Seeder
         $facility->facility_staffs()->attach($facilityAdminUser->id);
         $medicalCareMajority = MedicalCareNeed::where('name', 'medical_care_majority')->first();
 
-        // もし存在するなら、テスト施設にmedical_care_majorityを紐づけ
-        // if ($medicalCareMajority && $facility) {
-            $facility->medicalCareNeeds()->attach($medicalCareMajority->id);
+        // // もし存在するなら、テスト施設にmedical_care_majorityを紐づけ
+        // if ($medicalCareMajority === null) {
+        //     dd('medical_care_majority が見つかりません');
+        // } else {
+        //     dd('medical_care_majority が見つかりました: ' . $medicalCareMajority->id);
         // }
+
+        $medicalCareMajority = MedicalCareNeed::where('name', 'medical_care_majority')->first();
+        if ($medicalCareMajority) {
+            $facility->medicalCareNeeds()->attach($medicalCareMajority->id);
+        }
 
         // 家族編集権限のユーザーを作成
         if (!User::where('email', 'admin_family@boocare.co.jp')->exists()) {
@@ -125,6 +132,7 @@ class RolesAndPermissionsSeeder extends Seeder
         
         // 家族花子と利用者二郎を紐づけ
         $familyAdminUser->people_family()->attach($person->id);
+        
         }
         }
         }

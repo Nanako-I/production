@@ -36,8 +36,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('people');
-        
+    Schema::disableForeignKeyConstraints();
+    Schema::dropIfExists('people');//←該当するテーブル名を入れる
+    Schema::enableForeignKeyConstraints();
     }
     
 };
