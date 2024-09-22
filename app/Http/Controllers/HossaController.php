@@ -172,6 +172,11 @@ public function change(Request $request, $people_id, $id)
     // データ更新
     $hossa = Hossa::find($request->id);
 
+    // 古い画像ファイルが存在する場合は削除
+    if ($hossa->path && \Storage::exists($hossa->path)) {
+        \Storage::delete($hossa->path);
+    }
+
     if ($request->hasFile('filename')) {
         $directory = 'public/sample/hossa_photo';
         $filename = uniqid() . '.' . $request->file('filename')->getClientOriginalExtension();
@@ -203,12 +208,21 @@ public function change(Request $request, $people_id, $id)
      * @param  \App\Models\Food  $food
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        $hossa = Hossa::find($id);
-    if ($hossa) {
-        $hossa->delete();
-    }
-        return redirect()->route('people.index');
-    }
+    public function destroy($id) 
+        {
+            $hossa = Hossa::find($id);
+        
+            if ($hossa) {
+        
+                // 画像ファイルが存在する場合、削除
+                if ($hossa->path && \Storage::exists($hossa->path)) {
+                    \Storage::delete($hossa->path);
+                }
+        
+                // Tubeを削除
+                $hossa->delete();
+            }
+        
+            return redirect()->route('people.index')->with('success', '削除が完了しました。');
+        }
 }
