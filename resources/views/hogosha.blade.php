@@ -147,7 +147,10 @@
 
                                     </div>
                                 </div>
-                         <!-- 体調登録↓ -->
+
+                                <!-- 医療的ケアが必要な利用者の場合↓ -->
+                                @if($person->medical_care == 1)
+                                  <!-- 体調登録↓ -->
                         　    　 <div class="border-2 p-2 rounded-lg bg-white m-2">
                                      <div class="flex justify-start items-center">
                                         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
@@ -681,7 +684,7 @@
                                         @endif
                                     </div>
                                 </div>
-
+                                @endif
                                         <div class="border-2 p-2 rounded-lg bg-white mx-2 mb-2 mt-8">
                                           <div class="flex justify-start items-center">
                                             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
@@ -716,17 +719,11 @@
 
     </div>
   </div>
-<!--</section>-->
 
 
 
-
-            　　
-   　　　　　　　　　　　　　
-    <!--右側エリア[END]-->
 
 </div>
- <!--全エリア[END]-->
 
 </body>
 </html>
