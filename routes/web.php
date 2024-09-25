@@ -414,7 +414,13 @@ Route::post('speeches/{people_id}', [SpeechController::class,'store'])->name('sp
 Route::get('speeches/{people_id}', [SpeechController::class,'show'])->name('speech.show');
 Route::get('/speech/{id}/edit', 'SpeechController@edit')->name('speech.edit');
 
+// 連絡帳(職員側)↓
 Route::get('record/{people_id}/edit', [RecordController::class, 'show'])->name('record.edit');
+
+// 連絡帳(保護者側)↓
+Route::get('recordstamp/{people_id}', [RecordController::class, 'RecordStampshow'])->name('recordstamp.edit');
+Route::post('recordstamp/{people_id}', [RecordController::class, 'storeStamp'])->name('recordstamp.store');
+
 
 Route::get('notification/{people_id}/edit', [NotificationController::class, 'show'])->name('notification.show');
 Route::post('notification/{people_id}/edit', [NotificationController::class,'store'])->name('notification.post');

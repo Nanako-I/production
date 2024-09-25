@@ -693,7 +693,7 @@
                                             <p class="font-bold text-xl ml-2">{{ $person->person_name }}さんの記録</p>
                                           </div>
                                           <div class="flex justify-center mt-4">
-                                            <a href="{{ url('record/'.$person->id.'/edit') }}" class="relative">
+                                            <a href="{{ url('recordstamp/'.$person->id) }}" class="relative">
                                               @csrf
                                               <i class="material-icons md-90">add</i>
                                             </a>

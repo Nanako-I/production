@@ -47,7 +47,7 @@ class DompdfController extends Controller
        
     }
     public function record(){
-        return view('record');
+        return view('recordstamp');
     }
     
     public function store($people_id,Request $request)

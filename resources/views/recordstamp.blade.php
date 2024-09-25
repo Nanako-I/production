@@ -5,7 +5,7 @@
 <body>
   <div class="flex items-center justify-center" style="padding: 20px 0;">
     <div class="flex flex-col items-center">
-      <form method="get" action="{{ route('record.edit', $person->id) }}">
+      <form method="get" action="{{ route('recordstamp.edit', $person->id) }}">
                         @method('PATCH')
                         @csrf
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
@@ -65,7 +65,7 @@
           }
           
           .icon-container::after {
-            content: "ご家族とチャットする";
+            content: "事業所とチャットする";
             position: absolute;
             top: 100%;
             left: 50%;
@@ -141,8 +141,19 @@
 <section class="text-gray-600 body-font mx-auto" _msthidden="10">
   <div class="container px-5 pb-24 mx-auto flex flex-wrap" _msthidden="10">
    <div class="flex flex-col flex-wrap lg:py-6 -mb-10 lg:w-1/2 lg:pl-12 lg:text-left text-center" _msthidden="9">
+   @if (
+        collect([$foodsOnSelectedDate, $watersOnSelectedDate, $medicinesOnSelectedDate, $tubesOnSelectedDate, $temperaturesOnSelectedDate, $bloodpressuresOnSelectedDate, $toiletsOnSelectedDate, $kyuuinsOnSelectedDate, $hossasOnSelectedDate, $speechesOnSelectedDate, $lastTime, $lastMorningActivity, $lastAfternoonActivity, $lastActivity, $lastTraining, $lastLifestyle, $lastCreative])
+        ->every(fn($collection) => $collection === null || $collection->isEmpty())
+    ) 
+        @if (\Carbon\Carbon::parse($selectedDate)->isToday())
+            <p class="font-bold text-2xl">まだ事業所にて本日の記録が取られておりません。しばらくお待ちください。</p>
+        @elseif (\Carbon\Carbon::parse($selectedDate)->isYesterday() || \Carbon\Carbon::parse($selectedDate)->isBefore(now()->subDay()))
+            <p class="font-bold text-2xl">{{ $selectedDate }}は事業所にて記録が登録されていません。</p>
+        @endif
+    @endif
 
-   @if ($foodsOnSelectedDate->count() > 0)
+
+  @if ($foodsOnSelectedDate->count() > 0)
    <div class="flex flex-col mb-10 lg:items-start items-center" _msthidden="3">
         <div class="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-5">
          
@@ -654,37 +665,76 @@
 
 
     @php 
-    $stampExists = false;
-    foreach ($records as $record) {
-        if (isset($stamps[$record->id])) {
-            $stampExists = true;
-            break;
-        }
-    }
+    $dataExists = collect([$foodsOnSelectedDate, $watersOnSelectedDate, $medicinesOnSelectedDate, $tubesOnSelectedDate, $temperaturesOnSelectedDate, $bloodpressuresOnSelectedDate, $toiletsOnSelectedDate, $kyuuinsOnSelectedDate, $hossasOnSelectedDate, $speechesOnSelectedDate, $lastTime, $lastMorningActivity, $lastAfternoonActivity, $lastActivity, $lastTraining, $lastLifestyle, $lastCreative])->filter(fn($collection) => $collection !== null && !$collection->isEmpty())->isNotEmpty();
 @endphp
 
-@if(!$stampExists)
-    <p class="text-red-600 font-bold text-xl">{{ $selectedDate }}の記録は、まだご家族の確認・押印がされていません。</p>
-@endif
+@if ($dataExists)
+    @php 
+        $stampExists = false;
+        foreach ($records as $record) {
+            if (isset($stamps[$record->id])) {
+                $stampExists = true;
+                break;
+            }
+        }
+    @endphp
 
-@foreach ($records as $record)
-    <div class="oya-stamp-box">
-        <div class="stamp-box mt-3">
-            <div id="hanko" style="display: block;">
-                <span>確認済</span>
-                <hr noshade>
-                <span>{{ $stamps[$record->id]->created_at ?? '日付未設定' }}</span>
-                <hr noshade>
-                <span id="hanko-name">{{ $stamps[$record->id]->hanko_name ?? '名前未設定' }}</span>
+    @foreach ($records as $record)
+        <div class="oya-stamp-box">
+            <div class="stamp-box mt-3">
+                @if (isset($stamps[$record->id]))
+                    <div id="hanko" style="display: block;">
+                        <span>確認済</span>
+                        <hr noshade>
+                        <span>{{ $stamps[$record->id]->created_at ?? '日付未設定' }}</span>
+                        <hr noshade>
+                        <span id="hanko-name">{{ $stamps[$record->id]->hanko_name ?? '名前未設定' }}</span>
+                    </div>
+                @endif
             </div>
         </div>
-    </div>
-    @if(isset($stamps[$record->id]))
-        <p class="text-green-600 font-bold">ご家族にて確認・押印済みです。</p>
-    @else
-        <p class="text-red-600 font-bold">まだご家族の方は押印されていません。</p>
+        @if (isset($stamps[$record->id]))
+            <p class="text-green-600 font-bold">すでに押印済みです。</p>
+        @endif
+    @endforeach
+
+    @hasanyrole('client family user|client family reader')
+        @if (!$stampExists)
+            <form id="hanko-form" action="{{ route('recordstamp.store', $person->id) }}" method="POST">
+                @csrf
+                <p class="text-gray-900 font-bold text-xl px-3">確認後、お名前をご記入いただき「押印する」ボタンを押してください↓</p>
+                
+                <div style="display: flex; flex-direction: column; justify-content: flex-start; margin: 10px 0;">
+                    <input type="hidden" name="people_id" value="{{ $person->id }}">
+                    <input type="hidden" name="kiroku_date" value="{{ $selectedDate }}">
+                    
+                    <textarea id="hanko-area" name="hanko_name" class="w-full max-w-lg font-bold" style="width: 150px; height: 50px; color: black; font-size: 20px; text-align: center;" placeholder="お名前">{{ Auth::check() ? Auth::user()->name : '' }}</textarea>
+                    <button id="hanko-btn" type="submit" class="inline-flex items-center w-32 px-6 py-3 mt-3 bg-gray-800 border border-transparent rounded-md font-semibold text-lg text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                        押印する
+                    </button>
+                </div>
+            </form>
+
+            <div class="oya-stamp-box">	
+                <div class="stamp-box mt-3">	
+                    <div id="hanko">	
+                        <span>確認済</span>	
+                        <hr noshade>	
+                        <span>{{ $today }}</span>	
+                        <hr noshade>	
+                        <span id="hanko-name"></span>	
+                    </div>	
+                </div>	
+            </div>	
+        @endif
+    @endhasanyrole
+
+    @if(session('message'))
+        <div id="hanko-message" class="text-green-600 font-bold text-xl mt-4">
+            {{ session('message') }}
+        </div>
     @endif
-@endforeach
+@endif
 
 
 
