@@ -46,7 +46,6 @@
                     <div style="display: flex; flex-direction: column; align-items: center;">
                         <div class="flex items-center justify-center ml-4">
                             @if (!is_null($lastTime))
-                                
                         </div>
                     
                     @php
@@ -57,23 +56,25 @@
                     <div class="items-center justify-center p-4">
                         <input type="hidden" name="people_id" value="{{ $person->id }}">
                         
-                        <div style="display: flex; flex-direction: row; align-items: center; margin-top: 0.5rem; margin-bottom: 0.5rem;" class="my-3">
+                        
+                        @if (!is_null($lastTime->start_time) && !is_null($lastTime->end_time))
+                        <div style="display: flex; flex-direction: row; align-items: center; margin-top: 0.5rem; margin-bottom: 0.5rem;" class="my-3">                                             
                             <p class="text-gray-900 font-bold text-xl px-1.5">利用時間　合計時間({{ $totalUsageTime }})</p>
                         </div>
-                        
+                        @endif
                          <div style="display: flex; flex-direction: row; align-items: center; margin-top: 0.5rem; margin-bottom: 0.5rem;" class="my-3">
-                            <!--<label for="usage_date" class="text-gray-900 font-bold text-xl px-1.5">利用日:</label>-->
                             
                            <input type="date" name="date" id="usage_date" value="{{ \Carbon\Carbon::parse($lastTime->date)->format('Y-m-d') }}" required>
                         </div>
 
                         <div style="display: flex; flex-direction: row; align-items: center; margin-top: 0.5rem; margin-bottom: 0.5rem;" class="my-3">
-                            <input type="time" name="start_time" id="scheduled-time" value="{{ $lastTime->start_time->format('H:i') }}">
+                        <input type="time" name="start_time" id="scheduled-time" value="{{ $lastTime->start_time ? \Carbon\Carbon::parse($lastTime->start_time)->format('H:i') : '' }}">
                             <p class="text-gray-900 font-bold text-xl px-1.5">～</p>
                         </div>
                         
                         <div style="display: flex; flex-direction: row; align-items: center; margin-top: 0.5rem; margin-bottom: 0.5rem;" class="my-3">
-                            <input type="time" name="end_time" id="scheduled-time" value="{{ $lastTime->end_time->format('H:i') }}">
+                        <input type="time" name="end_time" id="scheduled-time" value="{{ $lastTime->end_time ? \Carbon\Carbon::parse($lastTime->end_time)->format('H:i') : '' }}">
+
                         </div>
                         
                         <div style="display: flex; flex-direction: row; align-items: center; margin-top: 0.5rem; margin-bottom: 0.5rem;" class="my-3">
@@ -82,9 +83,9 @@
                         </div>
                         
                             <div style="display: flex; flex-direction: row; align-items: center; margin-top: 0.5rem; margin-bottom: 0.5rem;" class="my-3">
-                                <select name="school" class="mx-1 my-1.5" style="width: 6rem;">
+                                <select name="school" class="mx-1 my-1.5" style="width: 8rem;">
                                     
-                                    <option value="selected"{{ $lastTime->school === '登録なし' ? ' selected' : '' }}>登録なし</option>
+                                    <option value="登録なし"{{ $lastTime->school === '登録なし' ? ' selected' : '' }}>登録なし</option>
                                     <option value="授業終了後"{{ $lastTime->school === '授業終了後' ? ' selected' : '' }}>授業終了後</option>
                                     <option value="休校"{{ $lastTime->school === '休校' ? ' selected' : '' }}>休校</option>
                                     <option value="欠席"{{ $lastTime->school === '欠席' ? ' selected' : '' }}>欠席</option>
@@ -101,11 +102,7 @@
                                 <input type="checkbox" name="send[]" value="送り" @if(!empty($sendData)) checked @endif class="w-6 h-6">
                                 <p class="text-gray-900 font-bold text-xl px-1.5">送り</p>
                             </div>
-                            
-                            
-                      
-                
-                     @endif
+                    @endif
                     <div style="display: flex; flex-direction: column; align-items: center; margin: 10px 0;">
                     <button type="submit" class="inline-flex items-center px-6 py-3 bg-gray-800 border border-transparent rounded-md font-semibold text-lg text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
                           修正

@@ -128,7 +128,11 @@ class DompdfController extends Controller
         // $people_id は既にメソッドの引数として渡されているため、不要
     // $people_id = $request->input('people_id'); // これは不要
     $selectedDate = $request->input('selected_date');
-        
+
+        $timesOnSelectedDate = Time::where('people_id', $people_id)
+        ->whereDate('created_at', $selectedDate)
+        ->orderBy('created_at')
+        ->get();
         // その日に登録された全ての体温データを取得
         $temperaturesOnSelectedDate = Temperature::where('people_id', $people_id)
         ->whereDate('created_at', $selectedDate)
@@ -202,7 +206,7 @@ class DompdfController extends Controller
         $hankoName = $person->pdfs->last();
 
         // レコードデータを使用してビューを読み込む
-    $pdf = PDF::loadView('record_pdf', compact('person', 'temperaturesOnSelectedDate','bloodPressuresOnSelectedDate','watersOnSelectedDate','medicinesOnSelectedDate','tubesOnSelectedDate','kyuuinsOnSelectedDate','hossasOnSelectedDate','toiletsOnSelectedDate', 'foodsOnSelectedDate', 'lastTraining', 'lastLifestyle', 'lastCreative', 'lastActivity', 'selectedDate', 'today', 'hankoName'));
+    $pdf = PDF::loadView('record_pdf', compact('person', 'timesOnSelectedDate','temperaturesOnSelectedDate','bloodPressuresOnSelectedDate','watersOnSelectedDate','medicinesOnSelectedDate','tubesOnSelectedDate','kyuuinsOnSelectedDate','hossasOnSelectedDate','toiletsOnSelectedDate', 'foodsOnSelectedDate', 'lastTraining', 'lastLifestyle', 'lastCreative', 'lastActivity', 'selectedDate', 'today', 'hankoName'));
 
 
         // PDFファイルをプレビュー

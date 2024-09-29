@@ -90,6 +90,13 @@
       
       @php
         $today = now()->format('Y-m-d'); // 今日の日付を取得（例：2023-08-07）
+        $stampExists = false;
+          foreach ($records as $record) {
+              if (isset($stamps[$record->id])) {
+                  $stampExists = true;
+                  break;
+              }
+          }
       @endphp
       
       <div class="flex items-center justify-center" style="padding: 20px 0;">
@@ -103,9 +110,11 @@
           <input type="date" name="selected_date" id="selected_date" value="{{ $selectedDate }}">
           <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-lg text-white uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
             表示
-          </button>
-        
+          </button>  
      </form> 
+      @if(!$stampExists)
+          <p class="text-red-600 font-bold text-xl mt-2">{{ $selectedDate }}の記録は、まだご家族の確認・押印がされていません。</p>
+      @endif
     </div>
   </div>
   
@@ -141,6 +150,57 @@
 <section class="text-gray-600 body-font mx-auto" _msthidden="10">
   <div class="container px-5 pb-24 mx-auto flex flex-wrap" _msthidden="10">
    <div class="flex flex-col flex-wrap lg:py-6 -mb-10 lg:w-1/2 lg:pl-12 lg:text-left text-center" _msthidden="9">
+
+  @if ($timesOnSelectedDate->count() > 0)
+   <div class="flex flex-col mb-10 lg:items-start items-center" _msthidden="3">
+        <div class="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-5">
+         
+            <i class="fa-solid fa-clock text-gray-700" style="font-size: 1.5em; transition: transform 0.2s;"></i>
+         </div>
+        <div class="flex-grow p-4" _msthidden="3">
+          <h2 class="text-gray-900 text-lg title-font font-medium mb-3" _msttexthash="204971" _msthidden="1" _msthash="743">利用日</h2>
+          
+          @foreach ($timesOnSelectedDate as $index => $time)
+                @php
+                    $formattedDate = \Carbon\Carbon::parse($time->date)->format('n/j');
+                    $startTime = $time->start_time ? \Carbon\Carbon::parse($time->start_time) : null;
+                    $endTime = $time->end_time ? \Carbon\Carbon::parse($time->end_time) : null;
+                    $usageTime = $startTime && $endTime ? $startTime->diff($endTime)->format('%H時間%I分') : null;
+                @endphp
+
+                <div class="flex justify-start text-left items-start">
+                    <p class="text-gray-900 font-bold text-2xl">
+                        <span class="mr-2">{{ $formattedDate }}</span>
+                        @if ($time->school !== '登録なし')
+                            <span class="text-base">{{ $time->school }}</span>
+                        @endif
+                    </p>
+                </div>
+
+                <div class="flex justify-start text-left items-start">
+                    @if (is_null($startTime) && is_null($endTime))
+                        <p class="text-gray-900 font-bold text-xl px-3">時間未登録</p>
+                    @elseif (is_null($startTime))
+                        <p class="text-gray-900 font-bold text-xl px-3">未設定～{{ $endTime->format('H時i分') }}</p>
+                    @elseif (is_null($endTime))
+                        <p class="text-gray-900 font-bold text-xl px-3">{{ $startTime->format('H時i分') }}～未設定</p>
+                    @else
+                        <p class="text-gray-900 font-bold text-xl px-3">{{ $startTime->format('H時i分') }}</p>
+                        ～ 
+                        <p class="text-gray-900 font-bold text-xl px-3">{{ $endTime->format('H時i分') }}</p>
+                    @endif
+                </div>
+                
+                <div class="flex justify-start text-left items-start">
+                    @if ($usageTime)
+                        <p class="text-gray-900 font-bold text-xl px-3">{{ $usageTime }}</p>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+        <hr style="border: 1px solid #666; margin: 0 auto; width: 100%;">
+      </div>
+    @endif
 
    @if ($foodsOnSelectedDate->count() > 0)
    <div class="flex flex-col mb-10 lg:items-start items-center" _msthidden="3">
@@ -653,19 +713,7 @@
     @endif
 
 
-    @php 
-    $stampExists = false;
-    foreach ($records as $record) {
-        if (isset($stamps[$record->id])) {
-            $stampExists = true;
-            break;
-        }
-    }
-@endphp
-
-@if(!$stampExists)
-    <p class="text-red-600 font-bold text-xl">{{ $selectedDate }}の記録は、まだご家族の確認・押印がされていません。</p>
-@endif
+   
 
 @foreach ($records as $record)
     <div class="oya-stamp-box">

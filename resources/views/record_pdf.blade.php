@@ -160,6 +160,51 @@
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
      <script src="https://kit.fontawesome.com/de653d534a.js" crossorigin="anonymous"></script>
 
+     @if($timesOnSelectedDate->count() > 0)
+     
+<body>
+<table style="width: 100%; border-collapse: collapse; border: 1px solid #000;">
+  <thead>
+    <tr>
+    <th colspan="3" style="border: 1px solid #000; text-align: left;">利用時間</th>
+    </tr>
+  </thead>
+  <tbody>
+  @foreach($timesOnSelectedDate as $time) 
+  @php
+    $formattedDate = \Carbon\Carbon::parse($time->date)->format('n/j');
+    $startTime = $time->start_time ? \Carbon\Carbon::parse($time->start_time) : null;
+    $endTime = $time->end_time ? \Carbon\Carbon::parse($time->end_time) : null;
+    $usageTime = $startTime && $endTime ? $startTime->diff($endTime)->format('%H時間%I分') : null;
+  @endphp
+    <tr>
+      <td style="width: 20%">{{ $formattedDate }}</td>
+      <td style="width: 20%">
+        @if ($time->school !== '登録なし')
+          <span class="text-base">{{ $time->school }}</span>
+        @endif
+      </td>
+      <td style="width: 60%">
+        @if (is_null($startTime) && is_null($endTime))
+          <span class="text-gray-900 font-bold text-xl px-3">時間未登録</span>
+        @elseif (is_null($startTime))
+          <span class="text-gray-900 font-bold text-xl px-3">未設定～{{ $endTime->format('H時i分') }}</span>
+        @elseif (is_null($endTime))
+          <span class="text-gray-900 font-bold text-xl px-3">{{ $startTime->format('H時i分') }}～未設定</span>
+        @else
+          <span class="text-gray-900 font-bold text-xl px-3">{{ $startTime->format('H時i分') }}～{{ $endTime->format('H時i分') }}</span>
+        @endif
+        @if ($usageTime)
+          <span class="text-gray-900 font-bold text-xl px-3">（{{ $usageTime }}利用）</span>
+        @endif
+      </td>
+    </tr>
+@endforeach
+  </tbody>
+</table>
+@endif
+
+
      @if($temperaturesOnSelectedDate->count() > 0)
 <body>
 <table style="width: 100%; border-collapse: collapse; border: 1px solid #000;">
