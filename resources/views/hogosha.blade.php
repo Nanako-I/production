@@ -102,7 +102,7 @@
                           }
                          </style>
                                 <div class="flex-grow">
-                                  <h2 class="h2 text-gray-900 title-font font-bold text-2.5xl" _msttexthash="277030">{{$person->person_name}}</h2>
+                                  <h2 class="h2 text-gray-900 title-font font-bold text-2.5xl" _msttexthash="277030">{{$person->last_name}}{{$person->first_name}}</h2>
                                   <p class="text-gray-900 font-bold text-xs" _msttexthash="150072">{{$person->date_of_birth}}生まれ</p>
                                 </div>
                         </div>
@@ -690,7 +690,7 @@
                                             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
                                             <script src="https://kit.fontawesome.com/de653d534a.js" crossorigin="anonymous"></script>
                                             <i class="fa-regular fa-clipboard text-green-700" style="font-size: 2em; padding: 0 5px; transition: transform 0.2s;"></i>
-                                            <p class="font-bold text-xl ml-2">{{ $person->person_name }}さんの記録</p>
+                                            <p class="font-bold text-xl ml-2">{{$person->last_name}}{{$person->first_name}}さんの記録</p>
                                           </div>
                                           <div class="flex justify-center mt-4">
                                             <a href="{{ url('recordstamp/'.$person->id) }}" class="relative">

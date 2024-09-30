@@ -4,6 +4,21 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import VisitTypeConst from "./constants";
 import dayjs from "dayjs";
 
+// CSSを新しいインポートパスで読み込む
+// import "@fullcalendar/daygrid/dist/index.css";
+// import "@fullcalendar/core/dist/vdom";
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     const calendarEl = document.getElementById("calendar");
+//     if (calendarEl) {
+//       const calendar = new Calendar(calendarEl, {
+//         plugins: [interactionPlugin, dayGridPlugin],
+//         initialView: "dayGridMonth",
+//       });
+//       calendar.render();
+//     }
+//   });
+
 document.addEventListener("DOMContentLoaded", function () {
     const calendarEl = document.getElementById("calendar");
     const calendar = new Calendar(calendarEl, {

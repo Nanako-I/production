@@ -34,11 +34,19 @@
         @csrf
         @method('PATCH')
 
-        <div style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
-            <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
-                <label class="block text-lg font-bold text-gray-700">名前</label>
-                <input name="person_name" type="text" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-xl font-bold border-gray-300 rounded-md" value="{{ old('person_name', $person->person_name) }}" placeholder="名前">
-            </div>
+    <div style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
+        <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
+            <label class="block text-lg font-bold text-gray-700">名前</label>
+            <input name="last_name" type="text" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-xl font-bold border-gray-300 rounded-md" value="{{ old('last_name', $person->last_name) }}"placeholder="姓">
+            <input name="first_name" type="text" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-xl font-bold border-gray-300 rounded-md" value="{{ old('first_name', $person->first_name) }}" placeholder="名">
+
+        </div>
+
+        <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
+            <!-- <label class="block text-lg font-bold text-gray-700">名前</label> -->
+            <input name="last_name_kana" type="text" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-xl font-bold border-gray-300 rounded-md"  value="{{ old('last_name_kana', $person->last_name_kana) }}" placeholder="セイ">
+            <input name="first_name_kana" type="text" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-xl font-bold border-gray-300 rounded-md" value="{{ old('first_name_kana', $person->first_name_kana) }}" placeholder="メイ">
+        </div>
             
             <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
                 <label class="block text-lg font-bold text-gray-700">生年月日</label>

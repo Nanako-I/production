@@ -22,7 +22,7 @@
           }
       </style>
       <div class="mx-1.5">
-        <h2>{{$person->person_name}}さんのトイレ情報</h2>
+        <h2>{{$person->last_name}}{{$person->first_name}}さんのトイレ情報</h2>
         @php
            $lastToilet = $person->child_toilets->last();
         @endphp

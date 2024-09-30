@@ -15,7 +15,7 @@ class Person extends Model
     use HasRoles;
     use HasFactory;
     protected $table = 'people';
-    protected $fillable = ['person_name','date_of_birth' , 'gender','jukyuusha_number', 'medical_care', 'kubun_number','profile_image','filename','path'];
+    protected $fillable = ['last_name','first_name','last_name_kana','first_name_kana','date_of_birth' , 'gender','jukyuusha_number', 'medical_care', 'kubun_number','profile_image','filename','path'];
 
     
     

@@ -259,7 +259,7 @@
                     @method('PATCH')
                     @csrf
                     <div class="flex items-center justify-center text-center">
-                        <h2 class="text-center">{{ $person->person_name }}さんの連絡</h2>
+                        <h2 class="text-center">{{$person->last_name}}{{$person->first_name}}さんについての連絡</h2>
                     </div>
                 </form>
             </div>

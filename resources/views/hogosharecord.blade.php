@@ -96,7 +96,7 @@
       <div class="flex items-center justify-center" style="padding: 20px 0;">
         <div class="flex flex-col items-center">
 
-        <h2>{{$person->person_name}}さん</h2>
+        <h2>{{$person->last_name}}{{$person->first_name}}さん</h2>
         <h3 class="text-gray-900 font-bold text-xl">{{ $selectedDate }}の記録</h3>
         </div>
       </div>

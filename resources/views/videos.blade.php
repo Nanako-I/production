@@ -23,7 +23,7 @@
    <div class="center-container">
        <div class="flex items-center justify-center my-2 font-bold text-2xl">                     
             <div class="mx-1.5">
-                <h2>{{$person->person_name}}さんのマニュアル動画</h2>
+                <h2>{{$person->last_name}}{{$person->first_name}}さんのマニュアル動画</h2>
              </div>                    
     </form>
         </div>

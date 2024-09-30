@@ -143,7 +143,7 @@ class PersonController extends Controller
     public function store(Request $request)
     {
         $storeData = $request->validate([
-            'person_name' => 'required|max:255',
+            
             'date_of_birth' => 'required|max:255',
             'jukyuusha_number' => 'required|digits:10',
         ]);
@@ -156,7 +156,8 @@ class PersonController extends Controller
             
             // 名前と生年月日が一致する利用者を検索
         $existingPersonByNameAndDob = $firstFacility->people_facilities()
-            ->where('person_name', $request->person_name)
+            ->where('last_name', $request->last_name)
+            ->where('first_name', $request->first_name)
             ->where('date_of_birth', $request->date_of_birth)
             ->first();
 
@@ -194,7 +195,10 @@ class PersonController extends Controller
         }
 
         $newpeople = Person::create([
-            'person_name' => $request->person_name,
+            'last_name' => $request->last_name,
+            'first_name' => $request->first_name,
+            'last_name_kana' => $request->last_name_kana,
+            'first_name_kana' => $request->first_name_kana,
             'date_of_birth' => $request->date_of_birth,
             'gender' => $request->gender,
             'jukyuusha_number' => $request->jukyuusha_number,
@@ -250,10 +254,39 @@ class PersonController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'person_name' => 'required|max:255',
             'date_of_birth' => 'required|date',
             'jukyuusha_number' => 'required|digits:10',
         ]);
+
+        $user = auth()->user();
+        $facilities = $user->facility_staffs()->get();
+        $firstFacility = $facilities->first();
+    // dd($firstFacility);
+        if ($firstFacility) {
+            
+            // 名前と生年月日が一致する利用者を検索
+        $existingPersonByNameAndDob = $firstFacility->people_facilities()
+            ->where('last_name', $request->last_name)
+            ->where('first_name', $request->first_name)
+            ->where('date_of_birth', $request->date_of_birth)
+            ->first();
+
+        // 受給者番号が一致する利用者を検索
+        $existingPersonByJukyuushaNumber = $firstFacility->people_facilities()
+            ->where('jukyuusha_number', $request->jukyuusha_number)
+            ->first();
+            // 名前と生年月日が一致する場合
+        if ($existingPersonByNameAndDob) {
+            return back()->withInput($request->all())
+                         ->withErrors(['duplicate_name_dob' => '同じ名前と生年月日の人がすでに存在します。']);
+        }
+
+        // 受給者番号が一致する場合
+        if ($existingPersonByJukyuushaNumber) {
+            return back()->withInput($request->all())
+                         ->withErrors(['duplicate_jukyuusha_number' => '同じ受給者番号の人がすでに存在します。']);
+        }
+    }
 
         $person = Person::findOrFail($id);
 
@@ -284,7 +317,10 @@ class PersonController extends Controller
         
 
         $person->update([
-            'person_name' => $request->person_name,
+            'last_name' => $request->last_name,
+            'first_name' => $request->first_name,
+            'last_name_kana' => $request->last_name_kana,
+            'first_name_kana' => $request->first_name_kana,
             'date_of_birth' => $request->date_of_birth,
             'gender' => $request->gender,
             'jukyuusha_number' => $request->jukyuusha_number,

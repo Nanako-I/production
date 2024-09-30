@@ -118,13 +118,18 @@ class RolesAndPermissionsSeeder extends Seeder
         
         
         // 家族花子の子ども（施設利用者）を作成
-        if (!Person::where('person_name', '利用者二郎')->exists()) {
-        $person = new Person();
-        $person->person_name = '利用者二郎';
-        $person->date_of_birth = '20000630';
-        $person->gender = '男';
-        $person->jukyuusha_number = '1234567890';
-        $person->save();
+         // 家族花子の子ども（施設利用者）を作成 
+         if (!Person::where('last_name', '利用者')->where('first_name', '二郎')->exists()) {
+            $person = new Person();
+            $person->last_name = '利用者';
+            $person->first_name = '二郎';
+            $person->last_name_kana = 'リヨウシャ';
+            $person->first_name_kana = 'ジロウ';
+            $person->date_of_birth = '20000630';
+            $person->gender = '男';
+            $person->jukyuusha_number = '1234567890';
+            $person->save();
+        }
        
         
         // 上記で作成したテスト施設と利用者を紐づけ
@@ -137,4 +142,4 @@ class RolesAndPermissionsSeeder extends Seeder
         }
         }
     }
-}
+

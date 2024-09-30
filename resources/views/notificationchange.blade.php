@@ -30,7 +30,7 @@
       <div class="center-container">
             <div class="flex items-center text-align: center justify-center my-2 font-bold text-2xl">
           <!--<div style="display: flex; align-items: center; margin-left: auto; margin-right: auto; max-width: 300px;">-->
-               <h2 style="margin: 0; padding: 0;">{{$person->person_name}}さんの特記事項</h2>
+               <h2 style="margin: 0; padding: 0;">{{$person->last_name}}{{$person->first_name}}さんの特記事項</h2>
             </div>
                 @php
                 $lastSpeech = $person->notifications->whereNotNull('notification')->last();

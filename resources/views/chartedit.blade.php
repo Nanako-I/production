@@ -22,7 +22,7 @@
                   text-decoration: underline;
                 }
           　</style>
-            <h2 class="text-center">{{$person->person_name}}さんの記録</h2>
+            <h2 class="text-center">{{$person->last_name}}{{$person->first_name}}さんの記録</h2>
         </form>
      　 <div class="flex flex-wrap">
             <!--<div>-->

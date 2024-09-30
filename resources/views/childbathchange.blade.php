@@ -22,7 +22,7 @@
           }
       </style>
       <div class="mx-1.5">
-        <h2>{{$person->person_name}}さんの入浴希望</h2>
+        <h2>{{$person->last_name}}{{$person->first_name}}さんの入浴希望</h2>
         @php
            $lastBath = $person->baths->last();
         @endphp

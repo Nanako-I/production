@@ -17,7 +17,7 @@
         }
       </style>
       <div class="mx-1.5">
-        <h2>{{$person->person_name}}さんのトイレ記録</h2>
+        <h2>{{$person->last_name}}{{$person->first_name}}さんのトイレ記録</h2>
       </div>
     </form>
     
