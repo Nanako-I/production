@@ -10,6 +10,8 @@ use App\Models\Role;
 use App\Models\Permission;
 use App\Models\User;
 use App\Models\Person;
+use App\Models\MedicalCareNeed;
+
 
 class RolesAndPermissionsSeeder extends Seeder
 {
@@ -90,7 +92,19 @@ class RolesAndPermissionsSeeder extends Seeder
         $facility->bikou = 'テスト施設の備考';
         $facility->save();
         $facility->facility_staffs()->attach($facilityAdminUser->id);
-        
+        $medicalCareMajority = MedicalCareNeed::where('name', 'medical_care_majority')->first();
+
+        // // もし存在するなら、テスト施設にmedical_care_majorityを紐づけ
+        // if ($medicalCareMajority === null) {
+        //     dd('medical_care_majority が見つかりません');
+        // } else {
+        //     dd('medical_care_majority が見つかりました: ' . $medicalCareMajority->id);
+        // }
+
+        $medicalCareMajority = MedicalCareNeed::where('name', 'medical_care_majority')->first();
+        if ($medicalCareMajority) {
+            $facility->medicalCareNeeds()->attach($medicalCareMajority->id);
+        }
 
         // 家族編集権限のユーザーを作成
         if (!User::where('email', 'admin_family@boocare.co.jp')->exists()) {
@@ -104,13 +118,18 @@ class RolesAndPermissionsSeeder extends Seeder
         
         
         // 家族花子の子ども（施設利用者）を作成
-        if (!Person::where('person_name', '利用者二郎')->exists()) {
-        $person = new Person();
-        $person->person_name = '利用者二郎';
-        $person->date_of_birth = '20000630';
-        $person->gender = '男';
-        $person->jukyuusha_number = '1234567890';
-        $person->save();
+         // 家族花子の子ども（施設利用者）を作成 
+         if (!Person::where('last_name', '利用者')->where('first_name', '二郎')->exists()) {
+            $person = new Person();
+            $person->last_name = '利用者';
+            $person->first_name = '二郎';
+            $person->last_name_kana = 'リヨウシャ';
+            $person->first_name_kana = 'ジロウ';
+            $person->date_of_birth = '20000630';
+            $person->gender = '男';
+            $person->jukyuusha_number = '1234567890';
+            $person->save();
+        }
        
         
         // 上記で作成したテスト施設と利用者を紐づけ
@@ -118,8 +137,8 @@ class RolesAndPermissionsSeeder extends Seeder
         
         // 家族花子と利用者二郎を紐づけ
         $familyAdminUser->people_family()->attach($person->id);
+        
         }
         }
         }
     }
-}

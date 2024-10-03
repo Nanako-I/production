@@ -179,10 +179,13 @@ public function change(Request $request, $people_id, $id)
             $request->validate([
                 'filename' => 'image|max:2048', // ファイルのバリデーション
             ]);
+
+            // 古い画像ファイルが存在する場合は削除
+            if ($toilet->path && \Storage::exists($toilet->path)) {
+                \Storage::delete($toilet->path);
+            }
     
             $directory = 'public/sample/toilet_photo';
-            // $filename = uniqid() . '.' . $request->file('filename')->getClientOriginalExtension();
-            // $filename = $request->file('filename')->getClientOriginalName();
             
             // 同じファイル名でも上書きされないようユニークなIDをファイル名に追加
             $uniqueId = uniqid();
@@ -195,21 +198,20 @@ public function change(Request $request, $people_id, $id)
             // 更新されたファイル名とパスをセット
             $toilet->filename = $filename;
             $toilet->path = $filepath;
-            // dd($kyuuin);
-            // ↑ここでは$filename　$filepathどちらも取れている
+            
             
      }
         // 他のデータを更新
-    $toilet->fill($request->except(['filename']));
-    $toilet->save();
+            $toilet->fill($request->except(['filename']));
+            $toilet->save();
 
-    // セッショントークンを再生成
-    $request->session()->regenerateToken();
+            // セッショントークンを再生成
+            $request->session()->regenerateToken();
 
-    $people = Person::all();
+            $people = Person::all();
 
-    return view('people', compact('toilet', 'people'));
-}
+            return view('people', compact('toilet', 'people'));
+        }
 
     /**
      * Remove the specified resource from storage.
@@ -217,13 +219,21 @@ public function change(Request $request, $people_id, $id)
      * @param  \App\Models\Food  $food
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-       
-        $toilet = Toilet::find($id);
-    if ($toilet) {
-        $toilet->delete();
-    }
-        return redirect()->route('people.index');
-    }
+    public function destroy($id) 
+        {
+            $toilet = Toilet::find($id);
+        
+            if ($toilet) {
+        
+                // 画像ファイルが存在する場合、削除
+                if ($toilet->path && \Storage::exists($toilet->path)) {
+                    \Storage::delete($toilet->path);
+                }
+        
+                // Tubeを削除
+                $toilet->delete();
+            }
+        
+            return redirect()->route('people.index')->with('success', '削除が完了しました。');
+        }
 }
