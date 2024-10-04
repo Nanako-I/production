@@ -27,6 +27,7 @@ use App\Http\Controllers\HogoshaUserController;
 use App\Http\Controllers\URLController;
 use App\Http\Controllers\BeforeInvitationController;//管理者が職員のIDを入力するためにfacility_idを取って画面遷移させるコントローラー
 use App\Http\Controllers\CustomIDController;//管理者が職員のIDを登録するコントローラー
+use App\Http\Controllers\OptionController;//記録項目を追加するためのコントローラー
 use App\Http\Controllers\TimeController;//利用時間を登録するコントローラー
 use App\Http\Controllers\PhotoController;
 
@@ -248,6 +249,12 @@ Route::resource('people', PersonController::class);
 // 登録項目選択
 Route::get('/selected-item/{people_id}', [PersonController::class, 'showSelectedItems'])->name('show.selected.items');
 Route::patch('/selected-item/{people_id}', [PersonController::class, 'updateSelectedItems'])->name('update.selected.items');
+
+// 記録項目の表示
+// Route::get('/people/{id}', [OptionController::class, 'show'])->name('people.show');
+
+// 記録項目の更新
+Route::post('/options', [OptionController::class, 'store'])->name('options.store');
 
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 // Route::get('/logout', 'Auth\LoginController@logout')->name('logout');

@@ -3,6 +3,7 @@
 <head>
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/main.min.css' rel='stylesheet' />
   <!-- Bootstrap Bundle JS (includes Popper) -->
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.bundle.min.js"></script>
 

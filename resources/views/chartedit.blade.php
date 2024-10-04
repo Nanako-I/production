@@ -1,6 +1,6 @@
-@vite(['resources/css/app.css', 'resources/js/app.js'])
-<x-app-layout>
 
+<x-app-layout>
+@vite(['resources/css/app.css', 'resources/js/app.js'])
     <!--ヘッダー[START]-->
 <body>
   <!--<div class="flex items-center justify-center" style="padding: 20px 0;">-->
@@ -22,7 +22,7 @@
                   text-decoration: underline;
                 }
           　</style>
-            <h2 class="text-center">{{$person->person_name}}さんの記録</h2>
+            <h2 class="text-center">{{$person->last_name}}{{$person->first_name}}さんの記録</h2>
         </form>
      　 <div class="flex flex-wrap">
             <!--<div>-->
@@ -67,5 +67,3 @@
  </script>
     
  </x-app-layout>
-  
-{{-- 追加した Blade ディレクティブ --}}

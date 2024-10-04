@@ -17,7 +17,7 @@
         }
       </style>
       <div class="mx-1.5">
-        <h2>{{$person->person_name}}さんのバイタル</h2>
+        <h2>{{$person->last_name}}{{$person->first_name}}さんのバイタル</h2>
       </div>
     </form>
    </div>
@@ -52,6 +52,8 @@
     </div>
     
     <div style="display: flex; flex-direction: column; align-items: center; margin-top: 0.5rem; margin-bottom: 0.5rem;" class="my-3">
+         
+        
         <p class="text-gray-900 font-bold text-xl">血圧（上）</p>
         <input name="max_blood" id="text-box" class="appearance-none block text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white font-bold" type="text" placeholder="" style="width: 4rem;">
         <p class="text-gray-900 font-bold text-xl">血圧（下）</p>

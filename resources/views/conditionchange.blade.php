@@ -22,7 +22,7 @@
           }
       </style>
       <div class="mx-1.5">
-        <h2>{{$person->person_name}}さんの体調</h2>
+        <h2>{{$person->last_name}}{{$person->first_name}}さんの体調</h2>
         @php
            $lastCondition = $person->child_conditions->last();
         @endphp

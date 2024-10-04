@@ -22,7 +22,7 @@
           }
       </style>
       <div class="mx-1.5">
-        <h2>{{$person->person_name}}さんの最終体温計測時間</h2>
+        <h2>{{$person->last_name}}{{$person->first_name}}さんの最終体温計測時間</h2>
         @php
            $lastTemperature = $person->child_temperatures->last();
         @endphp

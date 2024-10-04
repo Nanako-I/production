@@ -22,7 +22,7 @@
           }
       </style>
       <div class="mx-1.5">
-        <h2>{{$person->person_name}}さんの最終食事時間</h2>
+        <h2>{{$person->last_name}}{{$person->first_name}}さんの最終食事時間</h2>
         @php
            $lastFood = $person->child_foods->last();
         @endphp
