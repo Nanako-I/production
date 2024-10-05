@@ -10,7 +10,7 @@ class Option extends Model
     use HasFactory;
     protected $table = 'options';
     
-    protected $fillable = ['people_id','title','item1','item2','item3','item4','item5','flag'];
+    protected $fillable = ['title','people_id','item1','item2','item3','item4','item5','flag'];
     
     public function person()
     {

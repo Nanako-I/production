@@ -18,19 +18,20 @@ class OptionController extends Controller
         return view('people', compact('person', 'options', 'selectedItems'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $people_id)
 {
     $request->validate([
-        'new_item_title' => 'required|max:32',
-        'new_items' => 'array|min:1|max:5',
-        'new_items.*' => 'required|max:32',
+         'title' => 'required',
+        // 'new_items' => 'array|min:1|max:5',
+        // 'new_items.*' => 'required|max:32',
     ]);
+    $person = Person::findOrFail($people_id);
 
     $option = new Option();
-    $option->title = $request->new_item_title;
-    $option->people_id = auth()->user()->id;
+    $option->title = $request->title;
+    $option->people_id = $people_id;
     for ($i = 0; $i < 5; $i++) {
-        $option->{"item" . ($i + 1)} = $request->new_items[$i] ?? null;
+        $option->{"item" . ($i + 1)} = $request->item[$i] ?? null;
     }
     $option->flag = false;
 

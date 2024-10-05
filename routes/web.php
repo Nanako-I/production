@@ -254,7 +254,8 @@ Route::patch('/selected-item/{people_id}', [PersonController::class, 'updateSele
 // Route::get('/people/{id}', [OptionController::class, 'show'])->name('people.show');
 
 // 記録項目の更新
-Route::post('/options', [OptionController::class, 'store'])->name('options.store');
+Route::post('/selected-item/{people_id}', [OptionController::class, 'store'])->name('options.store');
+// Route::post('/options', [OptionController::class, 'store'])->name('options.store');
 
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 // Route::get('/logout', 'Auth\LoginController@logout')->name('logout');

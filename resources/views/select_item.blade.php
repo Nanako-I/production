@@ -90,22 +90,23 @@
     </div>
 
     <!-- モーダル -->
-    <form action="{{ route('options.store', $person->id) }}" method="POST" class="w-full max-w-lg">
+    <form action="{{ route('options.store', ['people_id' => $person->id]) }}" method="POST" id="add-item-form" class="w-full max-w-lg">
                 @csrf
+    <input type="hidden" name="people_id" value="{{ $person->id }}">
     <div id="add-item-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
         <div class="bg-white rounded-lg p-6 w-1/2">
             <h3 class="text-lg font-semibold mb-4">新しい記録項目を追加</h3>
 
             <!-- タイトル入力フィールド -->
             <label for="new-item-title" class="block text-gray-700 text-sm font-bold mb-2">タイトル</label>
-            <input type="text" id="new-item-title" name="new_item_title" class="border border-gray-300 rounded-md w-full px-3 py-2 mb-4" placeholder="タイトルを入力" maxlength="32">
+            <input type="text" id="new-item-title" name="title" class="border border-gray-300 rounded-md w-full px-3 py-2 mb-4" placeholder="タイトルを入力" maxlength="32">
 
             <!-- 項目入力フィールドのコンテナ -->
             <div id="item-fields-container">
                 <label class="block text-gray-700 text-sm font-bold mb-2">記録項目</label>
                 <!-- 項目入力フィールド（最初の一つ） -->
                 <div class="item-field mb-2">
-                    <input type="text" name="new_items[]" class="border border-gray-300 rounded-md w-full px-3 py-2" placeholder="項目を入力" maxlength="32">
+                    <input type="text" name="item[]" class="border border-gray-300 rounded-md w-full px-3 py-2" placeholder="項目を入力" maxlength="32">
                 </div>
             </div>
 
@@ -119,7 +120,7 @@
                 <button type="button" id="cancel-add-item" class="inline-flex items-center px-4 py-2 bg-white text-gray-800 border border-gray-800 rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-100 active:bg-gray-200 focus:outline-none focus:border-gray-800 focus:ring ring-gray-200 disabled:opacity-25 transition ease-in-out duration-150 mr-2">
                     キャンセル
                 </button>
-                <button type="button" id="confirm-add-item" class="inline-flex items-center px-4 py-2 bg-gray-800 text-white border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
+                <button type="submit" id="confirm-add-item" class="inline-flex items-center px-4 py-2 bg-gray-800 text-white border border-transparent rounded-md font-semibold text-xs uppercase tracking-widest hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 transition ease-in-out duration-150">
                     追加
                 </button>
             </div>
@@ -135,7 +136,7 @@
             const openModalButton = document.getElementById('add-item-button');
             const closeModalButton = document.getElementById('cancel-add-item');
             const confirmAddItemButton = document.getElementById('confirm-add-item');
-            const newItemTitleInput = document.getElementById('new-item-title');
+            const newItemTitleInput = document.getElementById('title');
             const errorMessage = document.getElementById('error-message');
             const formErrorMessage = document.getElementById('form-error-message');
             const recordItemsForm = document.getElementById('record-items-form');
@@ -176,7 +177,7 @@
             function addItemField() {
                 const itemFieldHTML = `
                     <div class="item-field mb-2">
-                        <input type="text" name="new_items[]" class="border border-gray-300 rounded-md w-full px-3 py-2" placeholder="項目を入力" maxlength="32">
+                        <input type="text" name="item[]" class="border border-gray-300 rounded-md w-full px-3 py-2" placeholder="項目を入力" maxlength="32">
                     </div>
                 `;
                 itemFieldsContainer.insertAdjacentHTML('beforeend', itemFieldHTML);
@@ -212,7 +213,7 @@
             // 新しい項目を追加するボタンのイベントリスナー
             confirmAddItemButton.addEventListener('click', function() {
                 const newItemTitle = newItemTitleInput.value.trim();
-                const newItemInputs = document.getElementsByName('new_items[]');
+                const newItemInputs = document.getElementsByName('item[]');
                 const newItems = [];
 
                 // エラーメッセージのリセット
@@ -247,8 +248,8 @@
 
                 // フォームデータを作成
         const formData = {
-            new_item_title: newItemTitle,
-            new_items: newItems
+            title: newItemTitle,
+            item: newItems
         };
 
                 // モーダルを閉じる
