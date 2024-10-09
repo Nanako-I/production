@@ -22,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('visit_type_id');
             $table->foreign('visit_type_id')->references('id')->on('visit_types')->onDelete('cascade');
             $table->text('notes')->nullable();
+            $table->string('transport')->nullable(); // 送迎の要否のカラムを追加
             $table->timestamps();
         });
     }
