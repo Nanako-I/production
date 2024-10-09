@@ -18,12 +18,17 @@ class OptionController extends Controller
         return view('people', compact('person', 'options', 'selectedItems'));
     }
 
-    public function store(Request $request, $people_id)
+    public function store(Request $request, $people_id,$id)
 {
     $request->validate([
-         'title' => 'required',
-        // 'new_items' => 'array|min:1|max:5',
-        // 'new_items.*' => 'required|max:32',
+        'title' => 'required',
+        'item' => 'required|array|min:1',
+        'item.*' => 'required|max:32',
+    ], [
+        'title.required' => 'タイトルは必須です',
+        'item.required' => '少なくとも1つの項目を入力してください',
+        'item.*.required' => '記録項目は必須です',
+        'item.*.max' => '各項目は32文字以内で入力してください',
     ]);
     $person = Person::findOrFail($people_id);
 
@@ -36,8 +41,16 @@ class OptionController extends Controller
     $option->flag = false;
 
     $option->save();
+    $selectedItems = json_decode($person->selected_items, true) ?? [];
+   // 二重送信防止
+   $request->session()->regenerateToken();
 
-    return response()->json(['message' => '記録項目が追加されました。']);
+    return redirect()->route('show.selected.items', ['people_id' => $people_id, 'id' => $id]);
+        // ->with('message', '記録項目が追加されました。');
 }
+
+
+        
 }
+
 
