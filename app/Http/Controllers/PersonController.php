@@ -12,6 +12,7 @@ use App\Models\Permission;
 use App\Models\Chat;
 use App\Models\Option;
 use App\Models\OptionItem;
+use App\Models\ScheduledVisit;
 
 use Spatie\Permission\Models\Role as SpatieRole;
 use App\Enums\RoleType;
@@ -87,14 +88,19 @@ class PersonController extends Controller
        // optionsテーブルから必要なデータを取得
        $options = Option::whereIn('people_id', $people->pluck('id'))
         ->get(['id', 'people_id', 'title', 'item1', 'item2', 'item3', 'item4', 'item5']);
-    $personOptions = [];
-    foreach ($people as $person) {
-        $personOptions[$person->id] = Option::where('people_id', $person->id)
-            ->where('flag', 1)
-            ->get();
-    }
+        $personOptions = [];
+        foreach ($people as $person) {
+            $personOptions[$person->id] = Option::where('people_id', $person->id)
+                ->where('flag', 1)
+                ->get();
+        }
 
-    //    return view('people', compact('people', 'selectedItems', 'options'));
+        // 各利用者の訪問データを取得して送迎の要否を確認
+        foreach ($people as $person) {
+            $scheduledVisit = ScheduledVisit::where('people_id', $person->id)->first();
+            $person->transport = $scheduledVisit ? $scheduledVisit->transport : '未登録';
+        }
+
     return view('people', compact('people', 'selectedItems', 'options', 'personOptions'));
     }
      

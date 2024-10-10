@@ -113,7 +113,8 @@ document.addEventListener("DOMContentLoaded", function () {
             response.data.contents.forEach((person) => {
                 const option = document.createElement("option");
                 option.value = person.id;
-                option.textContent = person.person_name;
+                // option.textContent = person.person_name;
+                option.textContent = `${person.last_name} ${person.first_name}`;
                 selectPeople.appendChild(option);
             });
         })
@@ -165,6 +166,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     ? document.getElementById("exit-time").value
                     : "00:00";
                 const exitDateTime = `${exitDate} ${exitTime}:00`;
+                // 送迎の要否のデータを取得
+                const transportElement = document.querySelector('input[name="transport"]:checked');
+                const transport = transportElement ? transportElement.value : null;
 
                 // 編集では変更があった項目のみを送信データに含める
                 const dataToSend = {
@@ -183,11 +187,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         exitDateTime !== originalData.exit_datetime
                             ? exitDateTime
                             : null;
+                    dataToSend.transport =
+                            transport !== originalData.transport
+                            ? transport
+                            : null;
                     dataToSend.notes = null;
                 } else {
                     dataToSend.visit_type_id = visitTypeId;
                     dataToSend.arrival_datetime = arrivalDateTime;
                     dataToSend.exit_datetime = exitDateTime;
+                    dataToSend.transport = transport;
                     dataToSend.notes = null;
                 }
 
@@ -323,6 +332,13 @@ function openModal(edit = false, eventData = null) {
         document.getElementById("exit-time").value = dayjs(
             eventData.end
         ).format("HH:mm");
+
+        // 送迎の要否のラジオボタンをセット
+        if (eventData.transport === 'あり') {
+            document.getElementById("transport-yes").checked = true;
+        } else {
+            document.getElementById("transport-no").checked = true;
+        }
     } else {
         modalTitle.textContent = "来訪日登録";
         submitButton.textContent = "登録";

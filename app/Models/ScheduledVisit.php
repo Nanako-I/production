@@ -14,6 +14,7 @@ class ScheduledVisit extends Model
         'arrival_datetime',
         'exit_datetime',
         'visit_type_id',
-        'notes'
+        'notes',
+        'transport'
     ];
 }
