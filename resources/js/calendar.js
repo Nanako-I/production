@@ -20,7 +20,14 @@ import dayjs from "dayjs";
 //   });
 
 document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOMContentLoaded event fired");
+    alert("カレンダーが表示されました！");
     const calendarEl = document.getElementById("calendar");
+    if (!calendarEl) {
+        alert("カレンダー要素が見つかりません。");
+        return; // Exit if the calendar element is not found
+    }
+    alert("カレンダー要素が見つかりました！");
     const calendar = new Calendar(calendarEl, {
         themeSystem: "bootstrap5",
         plugins: [interactionPlugin, dayGridPlugin],
@@ -304,6 +311,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     calendar.render();
+    // カレンダー表示後にアラートを出す
+    alert("カレンダーが表示されました！");
 });
 
 // スクロールバーの幅を計算
