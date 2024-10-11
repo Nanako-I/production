@@ -283,3 +283,4 @@ class DompdfController extends Controller
     }
 
 };
+

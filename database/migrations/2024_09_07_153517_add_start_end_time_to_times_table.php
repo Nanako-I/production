@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::table('times', function (Blueprint $table) {
             if (!Schema::hasColumn('times', 'start_time')) {
-                $table->time('start_time')->nullable()->default('00:00')->after('date');
+                $table->time('start_time')->default('00:00')->after('date');
             }
 
             if (!Schema::hasColumn('times', 'end_time')) {
-                $table->time('end_time')->nullable()->default('00:00')->after('start_time');
+                $table->time('end_time')->default('00:00')->after('start_time');
             }
         });
     }

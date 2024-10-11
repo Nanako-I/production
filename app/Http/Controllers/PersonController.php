@@ -10,9 +10,7 @@ use App\Models\Person;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\Chat;
-use App\Models\Option;
-use App\Models\OptionItem;
-use App\Models\ScheduledVisit;
+
 
 use Spatie\Permission\Models\Role as SpatieRole;
 use App\Enums\RoleType;
@@ -72,123 +70,64 @@ class PersonController extends Controller
         foreach ($people as $person) {
             $selectedItems[$person->id] = json_decode($person->selected_items, true) ?? [];
         }
-        
-        // Loop through each person and decode their selected items
-        // foreach ($people as $person) {
-        //     $selectedItems[$person->id] = json_decode($person->selected_items, true) ?? [];
-        // }
-        $today = \Carbon\Carbon::now()->toDateString();
-
-        foreach ($people as $person) {
-            $person->todayOptionItems = OptionItem::where('people_id', $person->id)
-                ->whereDate('created_at', $today)
-                ->get();
-        }
     
-       // optionsテーブルから必要なデータを取得
-       $options = Option::whereIn('people_id', $people->pluck('id'))
-        ->get(['id', 'people_id', 'title', 'item1', 'item2', 'item3', 'item4', 'item5']);
-        $personOptions = [];
-        foreach ($people as $person) {
-            $personOptions[$person->id] = Option::where('people_id', $person->id)
-                ->where('flag', 1)
-                ->get();
-        }
-
-        // 各利用者の訪問データを取得して送迎の要否を確認
-        foreach ($people as $person) {
-            $scheduledVisit = ScheduledVisit::where('people_id', $person->id)->first();
-            $person->transport = $scheduledVisit ? $scheduledVisit->transport : '未登録';
-        }
-
-    return view('people', compact('people', 'selectedItems', 'options', 'personOptions'));
+        return view('people', compact('people', 'selectedItems'));
     }
      
   
 
-    public function show($id)
-{
-    $person = Person::findOrFail($id);
+    public function show(User $user)
+    {
+
+        \Log::info('PersonController index method started.');
+        \Log::info('This is a test log.');
+
+
+        // ログインしているユーザーの情報↓
         $user = auth()->user();
 
-    $user->facility_staffs()->first();
+        $user->facility_staffs()->first();
 
-    // facility_staffsメソッドからuserの情報をゲットする↓
-    $facilities = $user->facility_staffs()->get();
+        // facility_staffsメソッドからuserの情報をゲットする↓
+        $facilities = $user->facility_staffs()->get();
 
-    $roles = $user->user_roles()->get(); // これでロールが取得できる
+        // dd($facilities);
+        $roles = $user->user_roles()->get(); // これでロールが取得できる
+        //   dd($roles);
 
-    $rolename = $user->getRoleNames(); // ロールの名前を取得
-    $isSuperAdmin = $user->hasRole(RoleType::FacilityStaffAdministrator);
+        $rolename = $user->getRoleNames(); // ロールの名前を取得
 
-    // ロールのIDを取得する場合
-    $roleIds = $user->roles->pluck('id');
+        $isSuperAdmin = $user->hasRole(RoleType::FacilityStaffAdministrator);
 
-    $firstFacility = $facilities->first();
-    if ($firstFacility) {
-        $people = $firstFacility->people_facilities()->get();
-    } else {
-        $people = []; // まだpeople（利用者が登録されていない時もエラーが出ないようにする）
-    }
+        // ロールのIDを取得する場合
+        $roleIds = $user->roles->pluck('id');
 
-    foreach ($people as $person) {
-        $unreadMessages = Chat::where('people_id', $person->id)
-                              ->where('is_read', false)
-                              ->where('user_identifier', '!=', $user->id)
-                              ->exists();
-    
-        $person->unreadMessages = $unreadMessages;
-        \Log::info("Person {$person->id} unread messages: " . ($unreadMessages ? 'true' : 'false'));
-    }
+        $firstFacility = $facilities->first();
+        if ($firstFacility) {
+            $people = $firstFacility->people_facilities()->get();
+        } else {
+            $people = []; // まだpeople（利用者が登録されていない時もエラーが出ないようにする）
+        }
 
-    $selectedItems = [];
+        foreach ($people as $person) {
+            $unreadMessages = Chat::where('people_id', $person->id)
+                                  ->where('is_read', false)
+                                  ->where('user_identifier', '!=', $user->id)
+                                  ->exists();
+        
+            $person->unreadMessages = $unreadMessages;
+            \Log::info("Person {$person->id} unread messages: " . ($unreadMessages ? 'true' : 'false'));
+        }
+
+        $selectedItems = [];
         
         // Loop through each person and decode their selected items
         foreach ($people as $person) {
             $selectedItems[$person->id] = json_decode($person->selected_items, true) ?? [];
         }
-
-
-    // options テーブルから追加項目を取得
-    $options = Option::whereIn('people_id', $people->pluck('id'))
-        ->get(['title', 'item1', 'item2', 'item3', 'item4', 'item5']);
-        $selectedItems = [];
     
-        $today = \Carbon\Carbon::now()->toDateString();
-
-        foreach ($people as $person) {
-            $person->todayOptionItems = OptionItem::where('people_id', $person->id)
-                ->whereDate('created_at', $today)
-                ->get();
-        }
-    
-       // optionsテーブルから必要なデータを取得
-       $options = Option::whereIn('people_id', $people->pluck('id'))
-        ->get(['id', 'people_id', 'title', 'item1', 'item2', 'item3', 'item4', 'item5']);
-
-        $personOptions = [];
-        foreach ($people as $person) {
-            $personOptions[$person->id] = Option::where('people_id', $person->id)
-                ->where('flag', 1)
-                ->get();
+        return view('people', compact('people', 'selectedItems'));
     }
-
-    // foreach ($options as $option) {
-    //     $items = collect([$option->item1, $option->item2, $option->item3, $option->item4, $option->item5])
-    //         ->filter()
-    //         ->implode(', '); // NULL 以外の値をカンマ区切りで結合
-
-    //     if ($items) {
-    //         $additionalItems[] = [
-    //             'title' => $option->title,
-    //             'items' => $items,
-    //         ];
-    //     }
-    // }
-
-    // return view('select_item', compact('person', 'selectedItems', 'personOptions', 'id'));
-    return view('people', compact('people', 'selectedItems', 'personOptions', 'options', 'id'));
-}
 
     /**
      * Show the form for creating a new resource.
@@ -440,130 +379,22 @@ class PersonController extends Controller
         }
 
     // 登録項目の選択↓
-    public function showSelectedItems($people_id, $id)
-{
-    $person = Person::findOrFail($id);
-    $selectedItems = json_decode($person->selected_items, true) ?? [];
-    
-    // options テーブルから追加項目を取得
-    $options = Option::where('people_id', $people_id)
-        ->get(['title', 'item1', 'item2', 'item3', 'item4', 'item5']);
-    
-    $additionalItems = [];
-
-    foreach ($options as $option) {
-        $items = collect([$option->item1, $option->item2, $option->item3, $option->item4, $option->item5])
-            ->filter()
-            ->implode(', '); // NULL 以外の値をカンマ区切りで結合
-
-        if ($items) {
-            $additionalItems[] = [
-                'title' => $option->title,
-                'items' => $items,
-            ];
-        }
+    public function showSelectedItems($people_id)
+    {
+        $person = Person::findOrFail($people_id);
+        $selectedItems = json_decode($person->selected_items, true) ?? [];
+        return view('select_item', compact('person', 'selectedItems'));
     }
 
-    return view('select_item', compact('person', 'selectedItems', 'additionalItems', 'id'));
-}
-
-
-
-public function updateSelectedItems(Request $request, $id)  
-{
-    $person = Person::findOrFail($id);
-    $selectedItems = $request->input('selected_items', []); // チェックされた項目を取得
-    // dd($selectedItems);
-    $selectedAdditionalItems = $request->input('selected_additional_items', []); // チェックされた追加項目を取得
-    // dd($selectedAdditionalItems);
-    
-    $additionalItems = DB::table('options')->where('people_id', $id)->get(['id', 'title']);
-
-    // dd($additionalItems);
-    // selected_items と selected_additional_items をマージして JSON エンコード
-    // チェックされた追加項目のみを取得する
-  
-    $filteredAdditionalItems = [];
-    foreach ($additionalItems as $item) {
-        if (in_array($item->id, $selectedAdditionalItems)) {
-            $filteredAdditionalItems[] = $item->id;
-        }
+    // 登録項目の修正↓
+    public function updateSelectedItems(Request $request, $id)
+    {
+        $person = Person::findOrFail($id);
+        $selectedItems = $request->input('selected_items', []);
+        $person->selected_items = json_encode($selectedItems, JSON_UNESCAPED_UNICODE);
+        $person->save();
+        return redirect()->route('people.show', $person->id)->with('success', '記録項目が更新されました。');
     }
-    // $filteredAdditionalItems = [];
-    // foreach ($additionalItems as $item) {
-    //     if (in_array($item['title'], $selectedAdditionalItems)) {
-    //         $filteredAdditionalItems[] = $item['title'];
-    //     }
-    // }
-    // foreach ($additionalItems as $item) {
-    //     // id を文字列としてキャスト
-    //     $itemId = (string) $item->id; 
-    //     // selectedAdditionalItems に itemId が含まれているか確認
-    //     if (in_array($itemId, $selectedAdditionalItems)) { 
-    //         $filteredAdditionalItems[] = $itemId; // id を追加
-    //     }
-    // }
-
-// dd($filteredAdditionalItems); // フィルタリングされた追加項目を確認
-
-    // selected_items と フィルタリングされた selected_additional_items をマージ
-    $combinedSelectedItems = array_merge($selectedItems, $filteredAdditionalItems);
-    // dd($combinedSelectedItems);
-    // JSON 形式で保存
-    $person->selected_items = json_encode(array_unique($combinedSelectedItems), JSON_UNESCAPED_UNICODE); 
-    $person->save();
-    
-    
-    // $selectedItems に追加項目を追加または削除
-    $selectedItemIds = array_merge(
-        $selectedItems,
-        $selectedAdditionalItems
-    );
-
-    // JSON 形式で保存
-    $person->selected_items = json_encode(array_unique($selectedItemIds), JSON_UNESCAPED_UNICODE);
-    $person->save();
-
-    // オプションを取得し、フラグを更新
-    $options = Option::where('people_id', $id)->get();
-    foreach ($options as $option) {
-        $option->flag = in_array($option->id, $selectedItemIds) ? 1 : 0;
-        $option->save();
-    }
-
-    return redirect()->route('people.index', $person->id)->with('success', '記録項目が更新されました。');
-}
-
-
-
-// 新しく追加するメソッド
-private function getAdditionalItems($id)
-{
-    // ここで追加の項目を取得するロジックを実装します
-    // 例えば、データベースから取得したり、他のソースから情報を集めたりします
-
-    // 仮の実装例：
-    $person = Person::findOrFail($id);
-    $options = Option::where('people_id', $id)->get();
-
-    $additionalItems = [];
-    foreach ($options as $option) {
-        $items = [];
-        for ($i = 1; $i <= 5; $i++) {
-            $itemKey = "item{$i}";
-            if (!is_null($option->$itemKey) && $option->$itemKey !== '') {
-                $items[] = $option->$itemKey;
-            }
-        }
-        
-        $additionalItems[] = [
-            'title' => $option->title,
-            'items' => implode(', ', $items)
-        ];
-    }
-
-    return $additionalItems;
-}
 
 
 

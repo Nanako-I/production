@@ -1,6 +1,6 @@
-
-<x-app-layout>
 @vite(['resources/css/app.css', 'resources/js/app.js'])
+<x-app-layout>
+
     <!--ヘッダー[START]-->
 <body>
   <!--<div class="flex items-center justify-center" style="padding: 20px 0;">-->
@@ -67,3 +67,5 @@
  </script>
     
  </x-app-layout>
+  
+{{-- 追加した Blade ディレクティブ --}}

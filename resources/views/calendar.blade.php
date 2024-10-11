@@ -54,7 +54,7 @@
       <form id="eventForm" class="p-6">
         <div class="mb-6">
           <label for="title" class="block text-sm font-medium text-gray-700">利用者名</label>
-          <select id="selectPeople" name="category" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 text-gray-900" required>
+          <select id="selectPeople" name="category" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500" required>
             <option value="" disabled selected>選択してください</option>
           </select>
         </div>
@@ -81,22 +81,6 @@
             <label for="exit-time" class="block text-sm font-medium text-gray-700">退館予定時間</label>
             <input type="time" id="exit-time" name="exit-time" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500">
           </div>
-          <!-- 新しい送迎の要否ラジオボタン -->
-          <div>
-            <label for="transport" class="block text-sm font-medium text-gray-700">送迎の要否</label>
-            <div class="mt-1 flex border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-indigo-500">
-                <div class="flex items-center mr-4">
-                    <input type="radio" id="transport_yes" name="transport" value="必要" required class="mr-2">
-                    <label for="transport_yes" class="text-sm">必要</label>
-                </div>
-                <div class="flex items-center">
-                    <input type="radio" id="transport_no" name="transport" value="不要" required class="mr-2">
-                    <label for="transport_no" class="text-sm">不要</label>
-                </div>
-            </div>
-        </div>
-
-
         </div>
         <!-- 備考は使いたいけどツールチップでの表示が上手くいってないため一旦コメントアウト -->
         <!-- <div class="mb-6">

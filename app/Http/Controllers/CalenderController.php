@@ -93,10 +93,7 @@ class CalenderController extends Controller
                     $scheduled_visits = ScheduledVisit::whereIn('people_id', $peopleIds)->get();
                     $scheduled_visits->each(function ($schedule) {
                         $schedule->type = VisitType::find($schedule->visit_type_id)->type;
-                        $person = Person::find($schedule->people_id);
-                        $schedule->person_name = $person->last_name . ' ' . $person->first_name;
-
-                        // $schedule->person_name = Person::find($schedule->people_id)->person_name;
+                        $schedule->person_name = Person::find($schedule->people_id)->person_name;
                     });
                     $response = self::returnMessageIndex($scheduled_visits);
                     $status = Response::HTTP_OK;
@@ -160,7 +157,6 @@ class CalenderController extends Controller
                 'exit_datetime' => $array['exit_datetime'],
                 'visit_type_id' => $array['visit_type_id'],
                 'notes' => $array['notes'],
-                'transport' => $array['transport'],
             ]);
             DB::commit();
             $response = self::returnMessageIndex(true);
