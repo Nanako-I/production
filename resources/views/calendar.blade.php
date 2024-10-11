@@ -37,7 +37,7 @@
 </head>
 
 <body>
-  <div id='calendar'></div>
+  <div id="calendar"></div>
   <!-- イベント登録モーダル -->
   <div class="fixed inset-0 z-50 bg-gray-600 bg-opacity-50 flex items-center justify-center p-6 hidden" id="modalBackdrop">
     <div class="bg-white w-1/3 rounded-lg shadow-xl z-50 overflow-auto">
