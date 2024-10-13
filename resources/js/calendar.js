@@ -169,6 +169,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 // 送迎の要否のデータを取得
                 const transportElement = document.querySelector('input[name="transport"]:checked');
                 const transport = transportElement ? transportElement.value : null;
+                console.log(transportElement);
+                console.log(transport);
 
                 // 編集では変更があった項目のみを送信データに含める
                 const dataToSend = {
@@ -199,6 +201,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     dataToSend.transport = transport;
                     dataToSend.notes = null;
                 }
+                console.log(dataToSend);
+
 
                 axios
                     .post(url, dataToSend, {
@@ -214,6 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         calendar.refetchEvents();
                     })
                     .catch((error) => {
+                        console.error(error);
                         alert("登録に失敗しました");
                     });
 
@@ -221,6 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
+    
     calendar.setOption("eventClick", function (info) {
         axios
             .get("/calendar/scheduled_visit_detail/", {
@@ -334,15 +340,23 @@ function openModal(edit = false, eventData = null) {
         ).format("HH:mm");
 
         // 送迎の要否のラジオボタンをセット
-        if (eventData.transport === 'あり') {
-            document.getElementById("transport-yes").checked = true;
+        const transportYes = document.getElementById("transport-yes");
+        const transportNo = document.getElementById("transport-no");
+
+        if (transportYes && transportNo) {
+            if (eventData.transport === 'あり') {
+                transportYes.checked = true;
+                transportNo.checked = false;
+            } else {
+                transportYes.checked = false;
+                transportNo.checked = true;
+            }
         } else {
-            document.getElementById("transport-no").checked = true;
+            console.warn("送迎の要否のラジオボタンが見つかりません");
         }
     } else {
         modalTitle.textContent = "来訪日登録";
         submitButton.textContent = "登録";
-        // フォームの値をクリア
         document.getElementById("eventForm").reset();
     }
 

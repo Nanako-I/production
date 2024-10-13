@@ -35,6 +35,7 @@ class CalenderRegisterRequest extends FormRequest
             'visit_type_id' => ['required', 'integer'],
             'arrival_datetime' => ['required', 'date_format:Y-m-d H:i:s'],
             'exit_datetime' => ['required', 'date_format:Y-m-d H:i:s'],
+            'transport' => ['required', 'in:必要,不要'], // transportフィールドのルールを追加
             'notes' => ['nullable', 'text'],
         ];
     }
@@ -65,6 +66,7 @@ class CalenderRegisterRequest extends FormRequest
             'visit_type_id',
             'arrival_datetime',
             'exit_datetime',
+            'transport',
             'notes'
         ]);
 

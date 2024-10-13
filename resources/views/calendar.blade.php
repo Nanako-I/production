@@ -51,16 +51,17 @@
           </svg>
         </button>
       </div>
-      <form id="eventForm" class="p-6">
+      <form id="eventForm" class="p-6" method="POST">
+      @csrf
         <div class="mb-6">
           <label for="title" class="block text-sm font-medium text-gray-700">利用者名</label>
-          <select id="selectPeople" name="category" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 text-gray-900" required>
+          <select id="selectPeople" name="people_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 text-gray-900" required>
             <option value="" disabled selected>選択してください</option>
           </select>
         </div>
         <div class="mb-6">
           <label for="selectVisitType" class="block text-sm font-medium text-gray-700">来訪タイプ</label>
-          <select id="selectVisitType" name="category" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500" required>
+          <select id="selectVisitType" name="visit_type_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500" required>
             <option value="" disabled selected>選択してください</option>
           </select>
         </div>
@@ -105,6 +106,7 @@
         </div> -->
         <button type="submit" id="submitButton" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 -700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">登録</button> <!-- submitButton の ID を追加 -->
       </form>
+      <!-- </form> -->
     </div>
   </div>
   <!-- 削除モーダル -->

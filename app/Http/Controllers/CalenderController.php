@@ -142,6 +142,17 @@ class CalenderController extends Controller
         return response()->json($response, $status);
     }
 
+    public function rules()
+{
+    return [
+        'people_id' => 'required|integer|exists:people,id',
+        'arrival_datetime' => 'required|date',
+        'exit_datetime' => 'required|date|after:arrival_datetime',
+        'visit_type_id' => 'required|integer|exists:visit_types,id',
+        'notes' => 'nullable|string',
+        'transport' => 'required|in:必要,不要', // "必要" または "不要" のみ許可
+    ];
+}
     /**
      * カレンダーに利用者の訪問予定を登録する
      *
@@ -150,10 +161,12 @@ class CalenderController extends Controller
      */
     public function register(CalenderRegisterRequest $request)
     {
+        
         $array = CalenderRegisterRequest::getOnlyRequest($request);
 
         DB::beginTransaction();
-        try {
+        \Log::info('Received data for registration:', $request->all());
+    try {
             ScheduledVisit::create([
                 'people_id' => $array['people_id'],
                 'arrival_datetime' => $array['arrival_datetime'],
@@ -163,17 +176,17 @@ class CalenderController extends Controller
                 'transport' => $array['transport'],
             ]);
             DB::commit();
-            $response = self::returnMessageIndex(true);
-            $status = Response::HTTP_OK;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $message = $e->getMessage();
-            $response = self::messageErrorStatusText($message);
-            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
-        }
-        return response()->json($response, $status);
+        $response = self::returnMessageIndex(true);
+        $status = Response::HTTP_OK;
+    } catch (\Exception $e) {
+        DB::rollBack();
+        \Log::error('Error in register method: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
+        $response = self::messageErrorStatusText($e->getMessage());
+        $status = Response::HTTP_INTERNAL_SERVER_ERROR;
     }
-
+    return response()->json($response, $status);
+}
     /**
      * カレンダーに利用者の訪問予定をを編集する
      *
