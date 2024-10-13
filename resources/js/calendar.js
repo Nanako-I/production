@@ -151,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const url = isEdit ? "/calendar/edit" : "/calendar/register";
 
                 // フォームのデータを取得
+                // const visitId = document.getElementById("scheduled-visit-id").value;
                 const peopleId = document.getElementById("selectPeople").value;
                 const visitTypeId =
                     document.getElementById("selectVisitType").value;

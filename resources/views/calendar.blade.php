@@ -67,6 +67,8 @@
         </div>
         <div class="mb-8 grid grid-cols-2 gap-8">
           <div>
+            
+            <input type="hidden" id="scheduled-visit-id" value="{{ $scheduledVisit->id}}">
             <label for="arrival-date" class="block text-sm font-medium text-gray-700">来訪予定日</label>
             <input type="date" id="arrival-date" name="arrival-date" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500" required>
           </div>
@@ -125,7 +127,8 @@
       <h3 class="text-lg font-semibold">予定の操作</h3>
       <div class="mt-4 flex justify-end space-x-3">
         <button id="cancelOption" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">キャンセル</button>
-        <button id="editButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">編集</button>
+        <!-- 来所予定のデータのidが取得できず、上手くできないので一旦コメントアウト -->
+        <!-- <button id="editButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">編集</button> -->
         <button id="deleteButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">削除</button>
       </div>
     </div>

@@ -31,6 +31,7 @@ class CalenderEditRequest extends FormRequest
     public function rules()
     {
         return [
+            'scheduled_visit_id' => ['required', 'integer', 'exists:scheduled_visits,id'], // 追加
             'people_id' => ['required', 'integer'],
             'visit_type_id' => ['nullable', 'integer'],
             'arrival_datetime' => ['nullable', 'date_format:Y-m-d H:i:s'],
@@ -62,6 +63,7 @@ class CalenderEditRequest extends FormRequest
     public static function getOnlyRequest($request)
     {
         $array = $request->only([
+            'scheduled_visit_id', // この行を追加
             'people_id',
             'visit_type_id',
             'arrival_datetime',

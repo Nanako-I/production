@@ -29,6 +29,8 @@ class CalenderController extends Controller
      */
     public function indexPerson(CalenderIndexPersonRequest $request)
     {
+        // $id = $request->input('id'); // リクエストからIDを取得
+        // $scheduledVisit = ScheduledVisit::findOrFail($id);
         $form_request = new CalenderIndexPersonRequest();
         $form_request->authorize($request);
         try {
@@ -116,31 +118,45 @@ class CalenderController extends Controller
         return response()->json($response, $status);
     }
 
+
     /**
      * 特定の訪問予定を取得
      *
      * @param CalenderScheduledVisitDetailRequest $request
      * @return JsonResponse
      */
-    public function getScheduledVisitDetail(CalenderScheduledVisitDetailRequest $request)
-    {
-        $array = CalenderScheduledVisitDetailRequest::getOnlyRequest($request);
+    public function getScheduledVisitDetail(CalenderScheduledVisitDetailRequest $request, $id) 
+{
+    $array = CalenderScheduledVisitDetailRequest::getOnlyRequest($request);
+    $scheduledVisit = ScheduledVisit::findOrFail($id);
 
-        try {
-            $schedule = ScheduledVisit::find($array['scheduled_visit_id']);
-            if (!$schedule) {
-                $response = self::returnMessageNodataArray();
-                $status = Response::HTTP_NO_CONTENT;
-            }
+    try {
+        $schedule = ScheduledVisit::find($array['scheduled_visit_id']);
+        if (!$schedule) {
+            $response = self::returnMessageNodataArray();
+            $status = Response::HTTP_NO_CONTENT;
+        } else {
             $response = self::returnMessageIndex($schedule);
             $status = Response::HTTP_OK;
-        } catch (\Exception $e) {
-            $message = $e->getMessage();
-            $response = self::messageErrorStatusText($message);
-            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
+    } catch (\Exception $e) {
+        $message = $e->getMessage();
+        $response = self::messageErrorStatusText($message);
+        $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+    }
+
+    // AJAX リクエストなら JSON を返す
+    if ($request->ajax()) {
         return response()->json($response, $status);
     }
+
+    // 通常のリクエストならビューを返す
+    return view('calendar', [
+        'scheduledVisit' => $scheduledVisit,
+        'schedule' => $schedule
+    ]);
+}
+
 
     public function rules()
 {
@@ -188,12 +204,12 @@ class CalenderController extends Controller
     return response()->json($response, $status);
 }
     /**
-     * カレンダーに利用者の訪問予定をを編集する
+     * カレンダーに利用者の訪問予定を編集する
      *
      * @param CalenderEditRequest $request
      * @return JsonResponse
      */
-    public function edit(CalenderEditRequest $request)
+    public function edit(CalenderEditRequest $request, $id)
     {
         $array = CalenderEditRequest::getOnlyRequest($request);
 
@@ -204,8 +220,13 @@ class CalenderController extends Controller
 
         DB::beginTransaction();
         try {
-            ScheduledVisit::where('people_id', $array['people_id'])
-                ->update($updateData);
+            // scheduled_visit_idを使って特定のレコードを更新
+        // ScheduledVisit::where('id', $array['scheduled-visit-id'])
+        $scheduledVisit = ScheduledVisit::findOrFail($id);
+        // ScheduledVisit::find($array['schedule_id'])
+        $scheduledVisit ->update($updateData);
+            // ScheduledVisit::where('people_id', $array['people_id'])
+                // ->update($updateData);
             DB::commit();
             $response = self::returnMessageIndex(true);
             $status = Response::HTTP_OK;
@@ -216,6 +237,9 @@ class CalenderController extends Controller
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
         return response()->json($response, $status);
+        // return view('/calendar', [
+        //     'scheduledVisit' => $scheduledVisit,
+        // ]);
     }
 
 
