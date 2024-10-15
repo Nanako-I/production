@@ -60,10 +60,10 @@ class Person extends Model
         return $this->hasMany(OptionItem::class, 'people_id');
     }
 
-    public function scheduledVisits()
-{
-    return $this->hasMany(ScheduledVisit::class, 'people_id');
-}
+    public function scheduled_visits()
+    {
+        return $this->hasMany(ScheduledVisit::class, 'people_id');
+    }
 
 // 体温一覧リスト↓
     public function temperatures()

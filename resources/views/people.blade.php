@@ -281,9 +281,11 @@
             <p class="font-bold text-xl ml-2">送迎:
                 <span>
                     @php
-                        $scheduledVisit = $person->scheduledVisits->where('arrival_datetime', '>=', now()->startOfDay())
-                                                ->where('arrival_datetime', '<=', now()->endOfDay())
-                                                ->first();
+                        // scheduled_visits リレーションをチェック
+                        $scheduledVisit = $person->scheduled_visits
+                            ->where('arrival_datetime', '>=', now()->startOfDay())
+                            ->where('arrival_datetime', '<=', now()->endOfDay())
+                            ->first();
                     @endphp
 
                     @if ($scheduledVisit)
@@ -295,13 +297,14 @@
                             未登録
                         @endif
                     @else
-                        未登録
+                        訪問データがありません
                     @endif
                 </span>
             </p>
-        </div>
-    </div>
-@endforeach
+
+                    </div>
+                </div>
+            @endforeach
 
 
                                 <!-- 体温登録↓ -->

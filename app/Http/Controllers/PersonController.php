@@ -51,7 +51,17 @@ class PersonController extends Controller
 
         $firstFacility = $facilities->first();
         if ($firstFacility) {
-            $people = $firstFacility->people_facilities()->get();
+            // 本日の日付を取得
+        $today = \Carbon\Carbon::now()->toDateString();
+
+        // 本日訪問予定がある人物のみを取得
+        $people = $firstFacility->people_facilities()
+        ->with('scheduled_visits') // リレーションを事前にロード
+            ->whereHas('scheduled_visits', function($query) use ($today) {
+                $query->whereDate('arrival_datetime', $today)
+                      ->orWhereDate('exit_datetime', $today);
+            })
+            ->get();
         } else {
             $people = []; // まだpeople（利用者が登録されていない時もエラーが出ないようにする）
         }
@@ -72,7 +82,7 @@ class PersonController extends Controller
         foreach ($people as $person) {
             $selectedItems[$person->id] = json_decode($person->selected_items, true) ?? [];
         }
-        
+        // dd($selectedItems);
         // Loop through each person and decode their selected items
         // foreach ($people as $person) {
         //     $selectedItems[$person->id] = json_decode($person->selected_items, true) ?? [];
@@ -94,12 +104,14 @@ class PersonController extends Controller
                 ->where('flag', 1)
                 ->get();
         }
+        // dd($options);
 
         // 各利用者の訪問データを取得して送迎の要否を確認
         foreach ($people as $person) {
             $scheduledVisit = ScheduledVisit::where('people_id', $person->id)->first();
             $person->transport = $scheduledVisit ? $scheduledVisit->transport : '未登録';
         }
+        // dd($person->id, array_keys($selectedItems));
 
     return view('people', compact('people', 'selectedItems', 'options', 'personOptions'));
     }

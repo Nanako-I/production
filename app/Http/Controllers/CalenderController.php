@@ -125,37 +125,25 @@ class CalenderController extends Controller
      * @param CalenderScheduledVisitDetailRequest $request
      * @return JsonResponse
      */
-    public function getScheduledVisitDetail(CalenderScheduledVisitDetailRequest $request, $id) 
-{
-    $array = CalenderScheduledVisitDetailRequest::getOnlyRequest($request);
-    $scheduledVisit = ScheduledVisit::findOrFail($id);
+    public function getScheduledVisitDetail(CalenderScheduledVisitDetailRequest $request)
+    {
+        $array = CalenderScheduledVisitDetailRequest::getOnlyRequest($request);
 
-    try {
-        $schedule = ScheduledVisit::find($array['scheduled_visit_id']);
-        if (!$schedule) {
-            $response = self::returnMessageNodataArray();
-            $status = Response::HTTP_NO_CONTENT;
-        } else {
+        try {
+            $schedule = ScheduledVisit::find($array['scheduled_visit_id']);
+            if (!$schedule) {
+                $response = self::returnMessageNodataArray();
+                $status = Response::HTTP_NO_CONTENT;
+            }
             $response = self::returnMessageIndex($schedule);
             $status = Response::HTTP_OK;
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+            $response = self::messageErrorStatusText($message);
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
-    } catch (\Exception $e) {
-        $message = $e->getMessage();
-        $response = self::messageErrorStatusText($message);
-        $status = Response::HTTP_INTERNAL_SERVER_ERROR;
-    }
-
-    // AJAX リクエストなら JSON を返す
-    if ($request->ajax()) {
         return response()->json($response, $status);
     }
-
-    // 通常のリクエストならビューを返す
-    return view('calendar', [
-        'scheduledVisit' => $scheduledVisit,
-        'schedule' => $schedule
-    ]);
-}
 
 
     public function rules()
