@@ -11,10 +11,17 @@ class ScheduledVisit extends Model
 
     protected $fillable = [
         'people_id',
+        'visit_type_id',
         'arrival_datetime',
         'exit_datetime',
-        'visit_type_id',
-        'notes',
-        'transport'
+        'pick_up',
+        'drop_off',
+        'pick_up_time',
+        'drop_off_time',
+        'pick_up_staff',
+        'drop_off_staff',
+        'pick_up_bus',
+        'drop_off_bus',
+        'notes'
     ];
 }

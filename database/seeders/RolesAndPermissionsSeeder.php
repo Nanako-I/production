@@ -135,18 +135,21 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // 利用者二郎の来訪日登録
         if (!ScheduledVisit::where('people_id', $person->id)
-                        ->where('arrival_datetime', '2024-10-07 10:00:00')
-                        ->exists()) {
-            $scheduledVisit = new ScheduledVisit();
-            $scheduledVisit->people_id = $person->id; // 利用者二郎のIDを使用
-            $scheduledVisit->arrival_datetime = '2024-10-07 10:00:00'; // 来訪予定日
-            $scheduledVisit->exit_datetime = '2024-10-07 12:00:00'; // 退館予定日
-            $scheduledVisit->visit_type_id = 1; // 仮の訪問タイプID
-            $scheduledVisit->notes = '特記事項なし';
-            $scheduledVisit->transport = '必要'; // 送迎の要否
-            $scheduledVisit->save();
+        ->where('arrival_datetime', '2024-10-07 09:30:00') // Adjusted arrival time
+        ->exists()) {
+        $scheduledVisit = new ScheduledVisit();
+        $scheduledVisit->people_id = $person->id; // 利用者二郎のIDを使用
+        $scheduledVisit->arrival_datetime = '2024-10-07 09:30:00'; // 来訪予定日 (迎え予定時間)
+        $scheduledVisit->exit_datetime = '2024-10-07 12:30:00'; // 退館予定日 (送り予定時間)
+        $scheduledVisit->visit_type_id = 1; // 仮の訪問タイプID
+        $scheduledVisit->notes = '特記事項なし';
+        $scheduledVisit->pick_up = '必要'; // 迎えの要否
+        $scheduledVisit->drop_off = '必要'; // 送りの要否
+        $scheduledVisit->pick_up_time = '2024-10-07 09:30:00'; // 迎え予定時間
+        $scheduledVisit->drop_off_time = '2024-10-07 12:30:00'; // 送り予定時間
+        $scheduledVisit->save();
 
-            echo "Scheduled visit for {$person->first_name} added.\n"; // 確認のための出力
+        echo "Scheduled visit for {$person->first_name} added with pick-up and drop-off details.\n"; // 確認のための出力
         }
 
 
