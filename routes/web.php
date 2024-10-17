@@ -235,6 +235,9 @@ Route::post('/staffregister',[StaffUserController::class,'register']);
 Route::get('peopleregister', [PersonController::class, 'create']);
 Route::post('peopleregister', [PersonController::class, 'store']);
 
+
+
+
 // 利用時間↓
 Route::post('times/{people_id}', [TimeController::class, 'store'])->name('time.store');
 Route::get('times/{people_id}', [TimeController::class, 'show'])->name('time.show');
@@ -246,6 +249,10 @@ Route::post('timechange/{people_id}/{id}',[TimeController::class,'update'])->nam
 
 
 Route::resource('people', PersonController::class);
+
+// 利用者全員のリスト
+Route::get('/peoplelist', [PersonController::class, 'list'])->name('people.list');
+
 
 // 登録項目選択
 Route::get('/selected-item/{people_id}/{id}', [PersonController::class, 'showSelectedItems'])->name('show.selected.items');

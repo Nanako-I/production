@@ -192,11 +192,26 @@ class PersonController extends Controller
      *
  
      */
+    // 利用者全員の一覧（peoplelistビュー）
+    public function list()
+{
+    $user = auth()->user();
+    $facilities = $user->facility_staffs()->get();
+    $firstFacility = $facilities->first();
+
+    // Retrieve people associated with the first facility
+    if ($firstFacility) {
+        $people = $firstFacility->people_facilities()->get();
+    } else {
+        $people = []; // Handle case when no people are registered
+    }
+
+    return view('peoplelist', compact('people'));
+
     public function create()
     {
         return view('peopleregister');
     }
-
 
     public function store(Request $request)
     {
@@ -486,22 +501,6 @@ public function updateSelectedItems(Request $request, $id)
             $filteredAdditionalItems[] = $item->id;
         }
     }
-    // $filteredAdditionalItems = [];
-    // foreach ($additionalItems as $item) {
-    //     if (in_array($item['title'], $selectedAdditionalItems)) {
-    //         $filteredAdditionalItems[] = $item['title'];
-    //     }
-    // }
-    // foreach ($additionalItems as $item) {
-    //     // id を文字列としてキャスト
-    //     $itemId = (string) $item->id; 
-    //     // selectedAdditionalItems に itemId が含まれているか確認
-    //     if (in_array($itemId, $selectedAdditionalItems)) { 
-    //         $filteredAdditionalItems[] = $itemId; // id を追加
-    //     }
-    // }
-
-// dd($filteredAdditionalItems); // フィルタリングされた追加項目を確認
 
     // selected_items と フィルタリングされた selected_additional_items をマージ
     $combinedSelectedItems = array_merge($selectedItems, $filteredAdditionalItems);
@@ -533,7 +532,7 @@ public function updateSelectedItems(Request $request, $id)
 
 
 
-// 新しく追加するメソッド
+// 新しく項目を追加するメソッド
 private function getAdditionalItems($id)
 {
     // ここで追加の項目を取得するロジックを実装します
