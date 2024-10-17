@@ -269,42 +269,36 @@
                                             </div>
 
 
-                                            @foreach ($people as $person)
-    <!-- 送迎の要否↓ -->
-    <div class="border-2 p-2 rounded-lg bg-white m-2">
-        <div class="flex justify-start items-center">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-            <script src="https://kit.fontawesome.com/de653d534a.js" crossorigin="anonymous"></script>
-
-            <i class="fa-solid fa-bus text-pink-600" style="font-size: 2em; padding: 0 5px; transition: transform 0.2s;"></i>
-
-            <p class="font-bold text-xl ml-2">送迎:
-                <span>
-                    @php
-                        // scheduled_visits リレーションをチェック
-                        $scheduledVisit = $person->scheduled_visits
-                            ->where('arrival_datetime', '>=', now()->startOfDay())
-                            ->where('arrival_datetime', '<=', now()->endOfDay())
-                            ->first();
-                    @endphp
-
-                    @if ($scheduledVisit)
-                        @if ($scheduledVisit->transport === '必要')
-                            必要
-                        @elseif ($scheduledVisit->transport === '不要')
-                            不要
-                        @else
-                            未登録
-                        @endif
-                    @else
-                        訪問データがありません
-                    @endif
-                </span>
-            </p>
-
-                    </div>
-                </div>
-            @endforeach
+                                    <!-- 送迎の要否↓ -->
+                                    <div class="border-2 p-2 rounded-lg bg-white m-2">
+                                        <div class="flex justify-start items-center">
+                                            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+                                            <script src="https://kit.fontawesome.com/de653d534a.js" crossorigin="anonymous"></script>
+                                            <i class="fa-solid fa-bus text-pink-600" style="font-size: 2em; padding: 0 5px; transition: transform 0.2s;"></i>
+                                                <p class="font-bold text-xl ml-2">送迎:
+                                                <span>
+                                                    @php
+                                                        // scheduled_visits リレーションをチェック
+                                                        $scheduledVisit = $person->scheduled_visits
+                                                            ->where('arrival_datetime', '>=', now()->startOfDay())
+                                                            ->where('arrival_datetime', '<=', now()->endOfDay())
+                                                            ->first();
+                                                    @endphp
+                                                    @if ($scheduledVisit)
+                                                        @if ($scheduledVisit->transport === '必要')
+                                                            必要
+                                                        @elseif ($scheduledVisit->transport === '不要')
+                                                            不要
+                                                        @else
+                                                            未登録
+                                                        @endif
+                                                    @else
+                                                        訪問データがありません
+                                                    @endif
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
 
 
                                 <!-- 体温登録↓ -->

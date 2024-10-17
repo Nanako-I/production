@@ -93,10 +93,10 @@ class PersonController extends Controller
         // dd($options);
 
         // 各利用者の訪問データを取得して送迎の要否を確認
-        foreach ($people as $person) {
-            $scheduledVisit = ScheduledVisit::where('people_id', $person->id)->first();
-            $person->transport = $scheduledVisit ? $scheduledVisit->transport : '未登録';
-        }
+        // foreach ($people as $person) {
+        //     $scheduledVisit = ScheduledVisit::where('people_id', $person->id)->first();
+        //     $person->transport = $scheduledVisit ? $scheduledVisit->transport : '未登録';
+        // }
 
     return view('people', compact('people', 'selectedItems', 'options', 'personOptions'));
     }

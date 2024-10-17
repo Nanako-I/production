@@ -739,6 +739,59 @@
     </div>
 @endif
 
+@if($temperaturesOnSelectedDate->count() > 0)
+      <div class="flex flex-col mb-10 lg:items-start items-center" _msthidden="3">
+        <div class="w-12 h-12 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-5">
+            
+        </div>
+        <div class="flex-grow" _msthidden="3">
+          <h2 class="text-gray-900 text-lg title-font font-medium mb-3" _msttexthash="232921" _msthidden="1" _msthash="740">1日の活動・様子</h2>
+          
+          @foreach ($temperaturesOnSelectedDate as $index => $temperature)
+            <div class="flex justify-around text-left items-start">
+              <p class="text-gray-900 font-bold text-xl px-3">今日{{ $temperature->created_at->format('H:i') }}に体温を測ると{{ $temperature->temperature }}℃でした。</p>
+            </div>
+           @endforeach
+
+           @if($lastTraining)
+          <div>
+          <p class="text-gray-900 font-bold text-xl px-3">今日行ったトレーニングは
+                @if(!empty($communicationData) && is_array($communicationData) && count($communicationData) > 0)
+                    <p class="text-gray-900 font-bold text-xl px-3">コミュニケーション</p>
+                @endif
+                
+                @if(!empty($exerciseData) && is_array($exerciseData) && count($exerciseData) > 0)
+                    <p class="text-gray-900 font-bold text-xl px-3">運動</p>
+                @endif
+                
+                @if(!empty($reading_writingData) && is_array($reading_writingData) && count($reading_writingData) > 0)
+                    <p class="text-gray-900 font-bold text-xl px-3">読み書き</p>
+                @endif
+                
+                @if(!empty($calculationData) && is_array($calculationData) && count($calculationData) > 0)
+                    <p class="text-gray-900 font-bold text-xl px-3">計算</p>
+                @endif
+                
+                @if(!empty($homeworkData) && is_array($homeworkData) && count($homeworkData) > 0)
+                    <p class="text-gray-900 font-bold text-xl px-3">宿題</p>
+                @endif
+                
+                @if(!empty($shoppingData) && is_array($shoppingData) && count($shoppingData) > 0)
+                    <p class="text-gray-900 font-bold text-xl px-3">買い物</p>
+                @endif
+                
+                @if(!empty($training_otherData) && is_array($training_otherData) && count($training_otherData) > 0)
+                    <p class="text-gray-900 font-bold text-xl px-3">その他</p>
+                @endif
+                <p class="text-gray-900 font-bold text-xl px-3">でした。</p>
+            </div>
+            @endif    
+
+        
+        </div>
+       <hr style="border: 1px solid #666; margin: 0 auto; width: 100%;">
+    </div>
+      @endif  
 
     <!-- @if($lastOptions)
       <div class="flex flex-col mb-10 lg:items-start items-center" _msthidden="3">
