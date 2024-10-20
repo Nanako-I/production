@@ -80,6 +80,35 @@
             <label for="exit-time" class="block text-sm font-medium text-gray-700">退館予定時間</label>
             <input type="time" id="exit-time" name="exit-time" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500">
           </div>
+          <!-- 迎えの要否 -->
+        　<div>
+            <label class="block text-sm font-medium text-gray-700">迎え</label>
+            <div class="mt-2">
+            <label class="inline-flex items-center">
+                <input type="radio" name="pick_up" value="必要" class="form-radio h-4 w-4 text-indigo-600" required>
+                <span class="ml-2">必要</span>
+            </label>
+            <label class="inline-flex items-center ml-6">
+                <input type="radio" name="pick_up" value="不要" class="form-radio h-4 w-4 text-indigo-600">
+                <span class="ml-2">不要</span>
+            </label>
+            </div>
+        　</div>
+
+        <!-- 送りの要否 -->
+        　<div>
+            <label class="block text-sm font-medium text-gray-700">送り</label>
+            <div class="mt-2">
+            <label class="inline-flex items-center">
+                <input type="radio" name="drop_off" value="必要" class="form-radio h-4 w-4 text-indigo-600" required>
+                <span class="ml-2">必要</span>
+            </label>
+            <label class="inline-flex items-center ml-6">
+                <input type="radio" name="drop_off" value="不要" class="form-radio h-4 w-4 text-indigo-600">
+                <span class="ml-2">不要</span>
+            </label>
+            </div>
+        　</div>
         </div>
         <!-- 備考は使いたいけどツールチップでの表示が上手くいってないため一旦コメントアウト -->
         <!-- <div class="mb-6">

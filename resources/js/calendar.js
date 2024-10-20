@@ -47,7 +47,9 @@ document.addEventListener("DOMContentLoaded", function () {
             var tooltip = new bootstrap.Tooltip(info.el, {
                 title: `${info.event.title}
                 <br>来訪: ${formatDate(info.event.start, false)}
-                <br>退館: ${formatDate(info.event.end, true)}`,
+                <br>退館: ${formatDate(info.event.end, true)}
+                <br>迎え: ${info.event.extendedProps.transportPickup}
+                <br>送り: ${info.event.extendedProps.transportDropoff}`, // 送迎情報を追加
                 placement: "top",
                 trigger: "hover",
                 container: "body",
@@ -75,6 +77,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             allDay = true; // 終日イベントとして設定
                         }
 
+                        // 送迎の要否データを取得
+                        const transportPickup = schedule.pick_up === '必要' ? '必要' : '不要';
+                        const transportDropoff = schedule.drop_off === '必要' ? '必要' : '不要';
+
                         return {
                             id: schedule.id,
                             title: `${schedule.person_name}
@@ -82,6 +88,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             start: startDate.format("YYYY-MM-DD HH:mm"),
                             end: endDate.format("YYYY-MM-DD HH:mm"),
                             allDay: allDay,
+                            transportPickup: transportPickup,   // 迎えデータを追加
+                            transportDropoff: transportDropoff, // 送りデータを追加
                         };
                     });
                     successCallback(schedules);
@@ -166,6 +174,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     : "00:00";
                 const exitDateTime = `${exitDate} ${exitTime}:00`;
 
+                送迎の要否のデータを取得
+                const pickUpValue = document.querySelector('input[name="pick_up"]:checked').value;
+                const dropOffValue = document.querySelector('input[name="drop_off"]:checked').value;
+
+
                 // 編集では変更があった項目のみを送信データに含める
                 const dataToSend = {
                     people_id: peopleId,
@@ -183,13 +196,21 @@ document.addEventListener("DOMContentLoaded", function () {
                         exitDateTime !== originalData.exit_datetime
                             ? exitDateTime
                             : null;
-                    dataToSend.notes = null;
-                } else {
+                     // 送迎の要否のデータ
+                    dataToSend.pick_up = pickUpValue !== originalData.pick_up ? pickUpValue : null;
+                    dataToSend.drop_off = dropOffValue !== originalData.drop_off ? dropOffValue : null;
+                        dataToSend.notes = null;
+                    } else {
                     dataToSend.visit_type_id = visitTypeId;
                     dataToSend.arrival_datetime = arrivalDateTime;
                     dataToSend.exit_datetime = exitDateTime;
+
+                    // 新規登録時の送迎の要否のデータ
+                    dataToSend.pick_up = pickUpValue;
+                    dataToSend.drop_off = dropOffValue;
+
                     dataToSend.notes = null;
-                }
+                    }
 
                 axios
                     .post(url, dataToSend, {

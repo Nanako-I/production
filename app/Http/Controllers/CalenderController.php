@@ -29,6 +29,8 @@ class CalenderController extends Controller
      */
     public function indexPerson(CalenderIndexPersonRequest $request)
     {
+        // $id = $request->input('id'); // リクエストからIDを取得
+        // $scheduledVisit = ScheduledVisit::findOrFail($id);
         $form_request = new CalenderIndexPersonRequest();
         $form_request->authorize($request);
         try {
@@ -93,7 +95,10 @@ class CalenderController extends Controller
                     $scheduled_visits = ScheduledVisit::whereIn('people_id', $peopleIds)->get();
                     $scheduled_visits->each(function ($schedule) {
                         $schedule->type = VisitType::find($schedule->visit_type_id)->type;
-                        $schedule->person_name = Person::find($schedule->people_id)->person_name;
+                        $person = Person::find($schedule->people_id);
+                        $schedule->person_name = $person->last_name . ' ' . $person->first_name;
+
+                        // $schedule->person_name = Person::find($schedule->people_id)->person_name;
                     });
                     $response = self::returnMessageIndex($scheduled_visits);
                     $status = Response::HTTP_OK;
@@ -112,6 +117,7 @@ class CalenderController extends Controller
         }
         return response()->json($response, $status);
     }
+
 
     /**
      * 特定の訪問予定を取得
@@ -139,6 +145,28 @@ class CalenderController extends Controller
         return response()->json($response, $status);
     }
 
+
+    public function rules()
+    {
+        return [
+            'people_id' => 'required|integer|exists:people,id',
+            'arrival_datetime' => 'required|date',
+            'exit_datetime' => 'required|date|after:arrival_datetime',
+            'visit_type_id' => 'required|integer|exists:visit_types,id',
+            'notes' => 'nullable|string',
+
+            // 送迎フィールドを追加
+            'pick_up_time' => 'nullable|date',
+            'drop_off_time' => 'nullable|date',
+            'pickup_completed' => 'nullable|boolean',
+            'dropoff_completed' => 'nullable|boolean',
+
+            // 送迎の必要性 ("必要" または "不要")
+            'pick_up' => 'nullable|in:必要,不要',
+            'drop_off' => 'nullable|in:必要,不要',  
+        ];
+    }
+
     /**
      * カレンダーに利用者の訪問予定を登録する
      *
@@ -146,60 +174,45 @@ class CalenderController extends Controller
      * @return JsonResponse
      */
     public function register(CalenderRegisterRequest $request)
-    {
-        $array = CalenderRegisterRequest::getOnlyRequest($request);
+{
+    $array = CalenderRegisterRequest::getOnlyRequest($request);
 
-        DB::beginTransaction();
-        try {
-            ScheduledVisit::create([
-                'people_id' => $array['people_id'],
-                'arrival_datetime' => $array['arrival_datetime'],
-                'exit_datetime' => $array['exit_datetime'],
-                'visit_type_id' => $array['visit_type_id'],
-                'notes' => $array['notes'],
-            ]);
-            DB::commit();
-            $response = self::returnMessageIndex(true);
-            $status = Response::HTTP_OK;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $message = $e->getMessage();
-            $response = self::messageErrorStatusText($message);
-            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
-        }
-        return response()->json($response, $status);
+    DB::beginTransaction();
+    try {
+        $scheduledVisit = ScheduledVisit::create([
+            'people_id' => $array['people_id'],
+            'arrival_datetime' => $array['arrival_datetime'],
+            'exit_datetime' => $array['exit_datetime'],
+            'visit_type_id' => $array['visit_type_id'],
+            'notes' => $array['notes'],
+            'pick_up' => $array['pick_up'],
+            'drop_off' => $array['drop_off'],
+            'pick_up_time' => $array['pick_up_time'],
+            'drop_off_time' => $array['drop_off_time'],
+            'pick_up_staff' => $array['pick_up_staff'] ?? null,
+            'drop_off_staff' => $array['drop_off_staff'] ?? null,
+            'pick_up_bus' => $array['pick_up_bus'] ?? null,
+            'drop_off_bus' => $array['drop_off_bus'] ?? null,
+        ]);
+
+        // scheduledVisit IDを外部キーとしてTransportにデータを挿入
+        $transport = new Transport();
+        $transport->scheduled_visit_id = $scheduledVisit->id;
+        $transport->people_id = $array['people_id'];
+        $transport->pickup_time = $array['pick_up_time'];
+        $transport->dropoff_time = $array['drop_off_time'];
+        $transport->pickup_completed = false; //初期値
+        $transport->dropoff_completed = false;
+        $transport->save();
+
+        DB::commit();
+
+        return response()->json(['success' => 'Scheduled visit and transport created'], 200);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['error' => $e->getMessage()], 500);
     }
-
-    /**
-     * カレンダーに利用者の訪問予定をを編集する
-     *
-     * @param CalenderEditRequest $request
-     * @return JsonResponse
-     */
-    public function edit(CalenderEditRequest $request)
-    {
-        $array = CalenderEditRequest::getOnlyRequest($request);
-
-        // nullでない値のみを抽出
-        $updateData = array_filter($array, function ($value) {
-            return !is_null($value);
-        });
-
-        DB::beginTransaction();
-        try {
-            ScheduledVisit::where('people_id', $array['people_id'])
-                ->update($updateData);
-            DB::commit();
-            $response = self::returnMessageIndex(true);
-            $status = Response::HTTP_OK;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $message = $e->getMessage();
-            $response = self::messageErrorStatusText($message);
-            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
-        }
-        return response()->json($response, $status);
-    }
+}
 
 
     /**
