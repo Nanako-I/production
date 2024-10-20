@@ -235,12 +235,9 @@ Route::post('/staffregister',[StaffUserController::class,'register']);
 Route::get('peopleregister', [PersonController::class, 'create']);
 Route::post('peopleregister', [PersonController::class, 'store']);
 
-<<<<<<< HEAD
-=======
 
 
 
->>>>>>> new-branch
 // 利用時間↓
 Route::post('times/{people_id}', [TimeController::class, 'store'])->name('time.store');
 Route::get('times/{people_id}', [TimeController::class, 'show'])->name('time.show');
@@ -253,12 +250,6 @@ Route::post('timechange/{people_id}/{id}',[TimeController::class,'update'])->nam
 
 Route::resource('people', PersonController::class);
 
-<<<<<<< HEAD
-// 登録項目選択
-Route::get('/selected-item/{people_id}', [PersonController::class, 'showSelectedItems'])->name('show.selected.items');
-Route::patch('/selected-item/{people_id}', [PersonController::class, 'updateSelectedItems'])->name('update.selected.items');
-
-=======
 // 利用者全員のリスト
 Route::get('/peoplelist', [PersonController::class, 'list'])->name('people.list');
 
@@ -290,7 +281,6 @@ Route::get('optionchange/{people_id}/{id}', [OptionItemController::class, 'chang
 // Route::post('optionchange/{people_id}/{id}', [OptionItemController::class, 'update'])->name('options.item.update');
 Route::patch('optionchange/{people_id}/{id}', [OptionItemController::class, 'update'])->name('options.item.update');
 
->>>>>>> new-branch
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 // Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 
