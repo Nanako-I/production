@@ -28,7 +28,7 @@ class PersonController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    
+
      public function index(User $user)
      {
          // ログインしているユーザーの情報↓
@@ -59,22 +59,22 @@ class PersonController extends Controller
                                   ->where('is_read', false)
                                   ->where('user_identifier', '!=', $user->id)
                                   ->exists();
-        
+
             $person->unreadMessages = $unreadMessages;
             \Log::info("Person {$person->id} unread messages: " . ($unreadMessages ? 'true' : 'false'));
         }
 
         $selectedItems = [];
-        
+
         // Loop through each person and decode their selected items
         foreach ($people as $person) {
             $selectedItems[$person->id] = json_decode($person->selected_items, true) ?? [];
         }
-    
+
         return view('people', compact('people', 'selectedItems'));
     }
-     
-  
+
+
 
     public function show(User $user)
     {
@@ -114,25 +114,25 @@ class PersonController extends Controller
                                   ->where('is_read', false)
                                   ->where('user_identifier', '!=', $user->id)
                                   ->exists();
-        
+
             $person->unreadMessages = $unreadMessages;
             \Log::info("Person {$person->id} unread messages: " . ($unreadMessages ? 'true' : 'false'));
         }
 
         $selectedItems = [];
-        
+
         // Loop through each person and decode their selected items
         foreach ($people as $person) {
             $selectedItems[$person->id] = json_decode($person->selected_items, true) ?? [];
         }
-    
+
         return view('people', compact('people', 'selectedItems'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
- 
+
      */
     public function create()
     {
@@ -143,17 +143,17 @@ class PersonController extends Controller
     public function store(Request $request)
     {
         $storeData = $request->validate([
-            
+
             'date_of_birth' => 'required|max:255',
             'jukyuusha_number' => 'required|digits:10',
         ]);
-        
+
         $user = auth()->user();
         $facilities = $user->facility_staffs()->get();
         $firstFacility = $facilities->first();
     // dd($firstFacility);
         if ($firstFacility) {
-            
+
             // 名前と生年月日が一致する利用者を検索
         $existingPersonByNameAndDob = $firstFacility->people_facilities()
             ->where('last_name', $request->last_name)
@@ -177,8 +177,8 @@ class PersonController extends Controller
                          ->withErrors(['duplicate_jukyuusha_number' => '同じ受給者番号の人がすでに存在します。']);
         }
     }
-   
-        
+
+
 
         $directory = 'public/sample';
         $filename = null;
@@ -207,7 +207,7 @@ class PersonController extends Controller
             'path' => $filepath,
 
         ]);
-        
+
 
 
         // 現在ログインしているユーザーが属する施設にpeople（利用者）を紐づける↓
@@ -232,7 +232,7 @@ class PersonController extends Controller
      * @param  \App\Models\Person  $person
      * @return \Illuminate\Http\Response
      */
-   
+
 
 
     /**
@@ -249,7 +249,7 @@ class PersonController extends Controller
     return view('peopleedit', compact('person'));
 }
 
-    
+
     //  利用者情報更新
     public function update(Request $request, $id)
     {
@@ -263,7 +263,7 @@ class PersonController extends Controller
         $firstFacility = $facilities->first();
     // dd($firstFacility);
         if ($firstFacility) {
-            
+
             // 名前と生年月日が一致する利用者を検索
         $existingPersonByNameAndDob = $firstFacility->people_facilities()
             ->where('last_name', $request->last_name)
@@ -294,7 +294,7 @@ class PersonController extends Controller
         $directory = 'public/sample';
         $filename = $person->filename; // 更新しない場合既存のファイル名を保持
         $filepath = $person->path; // 既存のパスを保持
-    
+
         if ($request->hasFile('filename')) {
             $request->validate([
                 'filename' => 'image|max:2048',
@@ -303,18 +303,18 @@ class PersonController extends Controller
         // 古い画像ファイルが存在する場合は削除
         if ($person->path && \Storage::exists($person->path)) {
             \Storage::delete($person->path);
-        }   
+        }
             // 同じファイル名でも上書きされないようユニークなIDをファイル名に追加
             $uniqueId = uniqid();
             $originalFilename = $request->file('filename')->getClientOriginalName();
             $filename = $uniqueId . '_' . $originalFilename;
             $request->file('filename')->storeAs($directory, $filename);
             $filepath = $directory . '/' . $filename;
-            
+
         }
         // バリデーションした内容を保存する↓
-        
-        
+
+
 
         $person->update([
             'last_name' => $request->last_name,
@@ -363,13 +363,13 @@ class PersonController extends Controller
                                   ->where('is_read', false)
                                   ->where('user_identifier', '!=', $user->id)
                                   ->exists();
-        
+
             $person->unreadMessages = $unreadMessages;
             \Log::info("Person {$person->id} unread messages: " . ($unreadMessages ? 'true' : 'false'));
         }
 
         $selectedItems = [];
-        
+
         // Loop through each person and decode their selected items
         foreach ($people as $person) {
             $selectedItems[$person->id] = json_decode($person->selected_items, true) ?? [];
@@ -425,5 +425,10 @@ class PersonController extends Controller
 
         $person->delete();
         return redirect('/people');
+    }
+
+    public function scheduled_visits()
+    {
+        return $this->hasMany(ScheduledVisit::class, 'people_id');
     }
 }

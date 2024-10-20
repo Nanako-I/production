@@ -1,19 +1,33 @@
 <?php
 
-namespace App\Models;
+    namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
 
-class ScheduledVisit extends Model
-{
-    use HasFactory;
+    class ScheduledVisit extends Model
+    {
+        use HasFactory;
 
-    protected $fillable = [
-        'people_id',
-        'arrival_datetime',
-        'exit_datetime',
-        'visit_type_id',
-        'notes'
-    ];
-}
+        protected $fillable = [
+            'people_id',
+            'visit_type_id',
+            'arrival_datetime',
+            'exit_datetime',
+            'pick_up',
+            'drop_off',
+            'pick_up_time',
+            'drop_off_time',
+            'pick_up_staff',
+            'drop_off_staff',
+            'pick_up_bus',
+            'drop_off_bus',
+            'notes'
+        ];
+
+        // Transport モデルとのリレーションを定義
+        public function transport()
+        {
+            return $this->hasOne(Transport::class, 'scheduled_visit_id');
+        }
+    }

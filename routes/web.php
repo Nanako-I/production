@@ -64,6 +64,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AmiVoiceController;
 use App\Http\Controllers\CalenderController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\ScheduledVisitController;
 // use Google\Cloud\Speech\V1p1beta1\StreamingRecognitionConfig;
 // use Google\Cloud\Speech\V1p1beta1\StreamingRecognizeRequest;
 
@@ -91,7 +92,7 @@ Route::get('auth.login', function () {
 })->name('stafflogin');
 
 
-                
+
 Route::post('/forgot-password', function (Request $request) {
     $request->validate(['email' => 'required|email']);
 
@@ -117,7 +118,7 @@ Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])
 
 Route::post('reset-password-staff/{token}', [NewPasswordController::class, 'staffpasswordstore'])
                 ->name('password-staff.store');
-                
+
 
 
 
@@ -278,6 +279,10 @@ Route::get('times/{people_id}/edit', [TimeController::class, 'edit'])->name('tim
 Route::get('timechange/{people_id}', [TimeController::class, 'change'])->name('time.change');
 Route::post('timechange/{people_id}',[TimeController::class,'update'])->name('time_update');
 
+//送迎のチェック
+Route::put('/scheduledVisit/{id}/updateTransport', [ScheduledVisitController::class, 'updateTransport'])->name('scheduledVisit.updateTransport');
+
+
 // トレーニング↓
 Route::post('trainings/{people_id}', [TrainingController::class, 'store'])->name('training.store');
 // トレーニング編集↓
@@ -337,7 +342,7 @@ Route::post('bloodpressuredestroy/{id}',[BloodpressureController::class,'destroy
 Route::get('foods/{id}', 'FoodController@show')->name('foods.show');
 Route::get('foodedit/{people_id}', [FoodController::class, 'edit'])->name('food.edit');
 Route::post('food/{people_id}', [FoodController::class,'store'])->name('food.store');
-Route::get('foodchange/{people_id}/{id}',[FoodController::class,'change'])->name('food.change'); 
+Route::get('foodchange/{people_id}/{id}',[FoodController::class,'change'])->name('food.change');
 Route::post('foodchange/{people_id}/{id}',[FoodController::class,'update'])->name('food_update');
 Route::post('fooddestroy/{id}',[FoodController::class,'destroy'])->name('food.delete');
 
@@ -519,8 +524,8 @@ Route::post('businesscard/extract', 'BusinessCardController@extract');
 
 // Route::get('message', 'MessageController@index');
 Route::get('/message', [MessageController::class, 'index']);
-Route::get('ajax/message', 'Ajax\MessageController@index'); 
-Route::post('ajax/message', 'Ajax\MessageController@create'); 
+Route::get('ajax/message', 'Ajax\MessageController@index');
+Route::post('ajax/message', 'Ajax\MessageController@create');
 
 // 音声認識テスト↓
 Route::view('/speechsample', 'speechsample');
