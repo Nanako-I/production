@@ -258,6 +258,11 @@ Route::get('/peoplelist', [PersonController::class, 'list'])->name('people.list'
 Route::get('/selected-item/{people_id}/{id}', [PersonController::class, 'showSelectedItems'])->name('show.selected.items');
 Route::patch('/selected-item/{people_id}', [PersonController::class, 'updateSelectedItems'])->name('update.selected.items');
 
+// 施設の全利用者に記録項目を適用
+Route::get('/item/{id}', [PersonController::class, 'showAddItemForm'])->name('show.items');
+Route::post('/item/{facility}/{id}', [OptionController::class, 'itemstore'])->name('addItem.store');
+Route::post('/item/all', [PersonController::class, 'addItemToAll'])->name('addItemToAll');
+
 // 記録項目の表示
 // Route::get('/people/{id}', [OptionController::class, 'show'])->name('people.show');
 

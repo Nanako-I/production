@@ -35,8 +35,11 @@ class CalenderRegisterRequest extends FormRequest
             'visit_type_id' => ['required', 'integer'],
             'arrival_datetime' => ['required', 'date_format:Y-m-d H:i:s'],
             'exit_datetime' => ['required', 'date_format:Y-m-d H:i:s'],
-            'pick_up' => ['required', 'in:必要,不要'], 
-            'drop_off' => ['required', 'in:必要,不要'],
+            'pick_up' => ['nullable', 'in:必要,不要'], 
+            'drop_off' => ['nullable', 'in:必要,不要'],
+            'pick_up_time' => ['nullable', 'date_format:Y-m-d H:i:s'], 
+            'drop_off_time' => ['nullable', 'date_format:Y-m-d H:i:s'],
+
             'notes' => ['nullable', 'text'],
         ];
     }

@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 登録モーダルで表示する利用者名の選択肢を取得
     const selectPeople = document.getElementById("selectPeople");
+if (selectPeople) {
     axios
         .get("/calendar/index_person")
         .then((response) => {
@@ -113,7 +114,6 @@ document.addEventListener("DOMContentLoaded", function () {
             response.data.contents.forEach((person) => {
                 const option = document.createElement("option");
                 option.value = person.id;
-                // option.textContent = person.person_name;
                 option.textContent = `${person.last_name} ${person.first_name}`;
                 selectPeople.appendChild(option);
             });
@@ -122,6 +122,10 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error fetching people:", error);
             alert("データの取得に失敗しました。");
         });
+} else {
+    console.error("Element #selectPeople not found");
+}
+
 
     // 登録モーダルで表示する訪問タイプの選択肢を取得
     const selectVisitType = document.getElementById("selectVisitType");
@@ -149,61 +153,74 @@ document.addEventListener("DOMContentLoaded", function () {
                 e.preventDefault();
                 const isEdit = submitButton.textContent === "編集する";
                 const url = isEdit ? "/calendar/edit" : "/calendar/register";
-
+    
                 // フォームのデータを取得
-                // const visitId = document.getElementById("scheduled-visit-id").value;
                 const peopleId = document.getElementById("selectPeople").value;
-                const visitTypeId =
-                    document.getElementById("selectVisitType").value;
-                const arrivalDate =
-                    document.getElementById("arrival-date").value;
-                const arrivalTime = document.getElementById("arrival-time")
-                    .value
-                    ? document.getElementById("arrival-time").value
-                    : "00:00";
+                const visitTypeId = document.getElementById("selectVisitType").value;
+                const arrivalDate = document.getElementById("arrival-date").value;
+                const arrivalTime = document.getElementById("arrival-time").value || "00:00";
                 const arrivalDateTime = `${arrivalDate} ${arrivalTime}:00`;
                 const exitDate = document.getElementById("exit-date").value;
-                const exitTime = document.getElementById("exit-time").value
-                    ? document.getElementById("exit-time").value
-                    : "00:00";
+                const exitTime = document.getElementById("exit-time").value || "00:00";
                 const exitDateTime = `${exitDate} ${exitTime}:00`;
+    
                 // 送迎の要否のデータを取得
-                const transportElement = document.querySelector('input[name="transport"]:checked');
-                const transport = transportElement ? transportElement.value : null;
-                console.log(transportElement);
-                console.log(transport);
-
+                const pickUpElement = document.querySelector('input[name="pick_up"]:checked');
+                const pickUp = pickUpElement ? pickUpElement.value : null;
+    
+                const dropOffElement = document.querySelector('input[name="drop_off"]:checked');
+                const dropOff = dropOffElement ? dropOffElement.value : null;
+    
+                const pickUpTimeInput = document.getElementById("pick_up_time");
+                const pickUpDate = document.getElementById("arrival-date").value; // 追加: ピックアップ日
+                const pickUpTime = pickUpTimeInput ? pickUpTimeInput.value : null;
+                const fullPickUpTime = pickUpDate && pickUpTime ? `${pickUpDate} ${pickUpTime}:00` : null; // 結合
+    
+                const dropOffTimeInput = document.getElementById("drop_off_time");
+                const dropOffDate = document.getElementById("exit-date").value; // 追加: ドロップオフ日
+                const dropOffTime = dropOffTimeInput ? dropOffTimeInput.value : null;
+                const fullDropOffTime = dropOffDate && dropOffTime ? `${dropOffDate} ${dropOffTime}:00` : null; // 結合
+    
+                const pickUpStaff = document.getElementById("pick_up_staff").value;
+                const dropOffStaff = document.getElementById("drop_off_staff").value;
+                const pickUpBus = document.getElementById("pick_up_bus").value;
+                const dropOffBus = document.getElementById("drop_off_bus").value;
+    
                 // 編集では変更があった項目のみを送信データに含める
                 const dataToSend = {
                     people_id: peopleId,
                 };
                 if (isEdit) {
-                    dataToSend.visit_type_id =
-                        visitTypeId !== originalData.visit_type_id
-                            ? visitTypeId
-                            : null;
-                    dataToSend.arrival_datetime =
-                        arrivalDateTime !== originalData.arrival_datetime
-                            ? arrivalDateTime
-                            : null;
-                    dataToSend.exit_datetime =
-                        exitDateTime !== originalData.exit_datetime
-                            ? exitDateTime
-                            : null;
-                    dataToSend.transport =
-                            transport !== originalData.transport
-                            ? transport
-                            : null;
+                    dataToSend.visit_type_id = visitTypeId !== originalData.visit_type_id ? visitTypeId : null;
+                    dataToSend.arrival_datetime = arrivalDateTime !== originalData.arrival_datetime ? arrivalDateTime : null;
+                    dataToSend.exit_datetime = exitDateTime !== originalData.exit_datetime ? exitDateTime : null;
+                    dataToSend.pick_up = pickUp !== originalData.pick_up ? pickUp : null;
+                    dataToSend.drop_off = dropOff !== originalData.drop_off ? dropOff : null;
+                    dataToSend.pick_up_time = fullPickUpTime !== originalData.pick_up_time ? fullPickUpTime : null; // 更新
+                    dataToSend.drop_off_time = fullDropOffTime !== originalData.drop_off_time ? fullDropOffTime : null; // 更新
+                    dataToSend.pick_up_staff = pickUpStaff !== originalData.pick_up_staff ? pickUpStaff : null;
+                    dataToSend.drop_off_staff = dropOffStaff !== originalData.drop_off_staff ? dropOffStaff : null;
+                    dataToSend.pick_up_bus = pickUpBus !== originalData.pick_up_bus ? pickUpBus : null;
+                    dataToSend.drop_off_bus = dropOffBus !== originalData.drop_off_bus ? dropOffBus : null;
                     dataToSend.notes = null;
                 } else {
                     dataToSend.visit_type_id = visitTypeId;
                     dataToSend.arrival_datetime = arrivalDateTime;
                     dataToSend.exit_datetime = exitDateTime;
-                    dataToSend.transport = transport;
+                    dataToSend.pick_up = pickUp;
+                    dataToSend.drop_off = dropOff;
+                    dataToSend.pick_up_time = fullPickUpTime; // 新規
+                    dataToSend.drop_off_time = fullDropOffTime; // 新規
+                    dataToSend.pick_up_staff = pickUpStaff;
+                    dataToSend.drop_off_staff = dropOffStaff;
+                    dataToSend.pick_up_bus = pickUpBus;
+                    dataToSend.drop_off_bus = dropOffBus;
                     dataToSend.notes = null;
                 }
                 console.log(dataToSend);
-
+            
+    
+    
 
                 axios
                     .post(url, dataToSend, {
@@ -341,20 +358,20 @@ function openModal(edit = false, eventData = null) {
         ).format("HH:mm");
 
         // 送迎の要否のラジオボタンをセット
-        const transportYes = document.getElementById("transport-yes");
-        const transportNo = document.getElementById("transport-no");
+        // const transportYes = document.getElementById("transport-yes");
+        // const transportNo = document.getElementById("transport-no");
 
-        if (transportYes && transportNo) {
-            if (eventData.transport === 'あり') {
-                transportYes.checked = true;
-                transportNo.checked = false;
-            } else {
-                transportYes.checked = false;
-                transportNo.checked = true;
-            }
-        } else {
-            console.warn("送迎の要否のラジオボタンが見つかりません");
-        }
+        // if (transportYes && transportNo) {
+        //     if (eventData.transport === 'あり') {
+        //         transportYes.checked = true;
+        //         transportNo.checked = false;
+        //     } else {
+        //         transportYes.checked = false;
+        //         transportNo.checked = true;
+        //     }
+        // } else {
+        //     console.warn("送迎の要否のラジオボタンが見つかりません");
+        // }
     } else {
         modalTitle.textContent = "来訪日登録";
         submitButton.textContent = "登録";

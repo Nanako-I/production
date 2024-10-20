@@ -154,7 +154,9 @@ class CalenderController extends Controller
         'exit_datetime' => 'required|date|after:arrival_datetime',
         'visit_type_id' => 'required|integer|exists:visit_types,id',
         'notes' => 'nullable|string',
-        'transport' => 'required|in:必要,不要', // "必要" または "不要" のみ許可
+        'pick_up_time' => 'nullable|date', 
+        'drop_off_time' => 'nullable|date',
+        // 'transport' => 'required|in:必要,不要', // "必要" または "不要" のみ許可
     ];
 }
     /**
@@ -177,7 +179,15 @@ class CalenderController extends Controller
                 'exit_datetime' => $array['exit_datetime'],
                 'visit_type_id' => $array['visit_type_id'],
                 'notes' => $array['notes'],
-                'transport' => $array['transport'],
+                // 'transport' => $array['transport'],
+                'pick_up' => $array['pick_up'],
+                'drop_off' => $array['drop_off'],
+                'pick_up_time' => $array['pick_up_time'],
+                'drop_off_time' => $array['drop_off_time'],
+                'pick_up_staff' => $array['pick_up_staff'],
+                'drop_off_staff' => $array['drop_off_staff'],
+                'pick_up_bus' => $array['pick_up_bus'],
+                'drop_off_bus' => $array['drop_off_bus'],
             ]);
             DB::commit();
         $response = self::returnMessageIndex(true);

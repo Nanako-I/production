@@ -17,6 +17,7 @@ return new class extends Migration
                 $table->id(); // 主キー
                 $table->string('title'); // 記録項目の題名
                 $table->foreignId('people_id')->constrained('people'); // peopleテーブルの外部キー
+                $table->foreignId('facility_id')->nullable()->constrained('facilities');
                 $table->string('item1')->nullable(); // 記録項目のアイテム
                 $table->string('item2')->nullable();
                 $table->string('item3')->nullable();

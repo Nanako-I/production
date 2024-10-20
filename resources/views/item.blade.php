@@ -13,9 +13,6 @@
                 <span class="block sm:inline">エラーが発生しました。再度お試しください。</span>
             </div>
 
-            <!-- <form id="record-items-form" class="w-full max-w-lg"> -->
-            <form action="{{ route('update.selected.items', $person->id) }}" method="POST" class="w-full max-w-lg">
-                
                 @csrf
                 @method('PATCH')
                 <style>
@@ -38,80 +35,9 @@
                 </style>
                 <div class="flex items-center justify-center" style="padding: 20px 0;">
                     <div class="flex flex-col items-center">
-                        <h2>{{$person->last_name}}{{$person->first_name}}さんの記録項目</h2>
+                        <h2>事業所の記録項目</h2>
                     </div>
                 </div>
-                <div class="flex flex-col items-left">
-                    <div class="flex items-center justify-center">
-                        <input type="hidden" name="people_id" value="{{ $person->id }}">
-                    </div>
-
-                    <!-- 記録項目の表示 -->
-                    @php
-                if ($person->medical_care == 1) {
-                    $items = [
-                        ['name' => '体温'],
-                        ['name' => 'トイレ', 'details' => '尿量・便量・便状態・便通処置・写真'],
-                        ['name' => '水分摂取', 'details' => '水分摂取の時間'],
-                        ['name' => '内服', 'details' => '内服の時間'],
-                        ['name' => '注入', 'details' => '注入の時間・写真'],
-                        ['name' => '血圧・脈・SpO2'],
-                        ['name' => '吸引', 'details' => '吸引の時間・写真'],
-                        ['name' => '発作', 'details' => '発作が起きた時間・様子・動画']
-                    ];
-                } else {
-                    $items = [
-                        ['name' => '体温'],
-                        ['name' => '食事', 'details' => '昼食・メニュー・おやつ・おやつのメニュー'],
-                        ['name' => 'トイレ', 'details' => '尿量・便量・便状態・便通処置・写真'],
-                        ['name' => 'トレーニング', 'details' => 'コミュニケーション・運動・読み書き・計算・宿題・買い物・その他'],
-                        ['name' => '生活習慣', 'details' => '荷物整理・掃除・その他'],
-                        ['name' => '創作活動', 'details' => '図画工作・料理・その他'],
-                        ['name' => '集団・個人活動', 'details' => '課題・余暇・レクリエーション・地域交流']
-                    ];
-                }
-                @endphp
-
-                @foreach($items as $item)
-                    <div class="flex flex-row items-center my-3">
-                        <input type="checkbox" name="selected_items[]" value="{{ $item['name'] }}" {{ in_array($item['name'], $selectedItems) ? 'checked' : '' }} class="w-6 h-6">
-                        <p class="text-gray-900 font-bold text-xl px-1.5">{{ $item['name'] }}</p>
-                        @if(isset($item['details']))
-                        <p class="text-gray-500 text-base px-1.5">{{ $item['details'] }}</p>
-                        @endif
-                        <!-- <button type="button" class="add-to-all-btn ml-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600" data-item="{{ $item['name'] }}" data-facility-id="{{ $facility->id}}">
-                            全員に追加
-                        </button> -->
-                    </div>
-                @endforeach
-                
-                @if(!empty($additionalItems))
-    @foreach ($additionalItems as $item)
-        <div class="flex flex-row items-center my-3">
-            <input type="checkbox" 
-                name="selected_additional_items[]" 
-                value="{{ $item['id'] }}" 
-                {{ in_array($item['id'], $selectedItems) || (session('newly_added_items') && in_array($item['id'], session('newly_added_items'))) ? 'checked' : '' }} 
-                class="w-6 h-6">
-            <p class="text-gray-900 font-bold text-xl px-1.5">{{ $item['title'] }}</p>
-            <p class="text-gray-500 text-base px-1.5">{{ $item['items'] }}</p>
-            <!-- <form action="{{ route('addItemToAll', ['people_id' => $person->id]) }}" method="POST" class="w-full max-w-lg">
-                @csrf
-                <button type="submit"  
-                    class="add-to-all-btn ml-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600" 
-                    data-item="{{ $item['id'] }}" 
-                    data-facility-id="{{ $facility->id}}">
-                    全員に追加
-                </button>
-            </form> -->
-        </div>
-    @endforeach
-@endif
-           
-
-
-
-
 
                 <!-- 記録項目を追加するボタン -->
                 <div class="flex items-center justify-center mt-4">
@@ -126,14 +52,13 @@
                         更新
                     </button>
                 </div>
-            </form>
+            <!-- </form> -->
         </div>
     </div>
-
-    <!-- モーダル -->
-    <form action="{{ route('options.store', ['people_id' => $person->id, 'id' => $id]) }}" method="POST" id="add-item-form" class="w-full max-w-lg">
+ <!-- モーダル -->
+ <form action="{{ route('addItem.store', ['facility' => $facility->id, 'id' => $id]) }}" method="POST" id="add-item-form" class="w-full max-w-lg">
         @csrf
-    <input type="hidden" name="people_id" value="{{ $person->id }}">
+    <input type="hidden" name="facility_id" value="{{ $facility->id }}">
     <div id="add-item-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
         <div class="bg-white rounded-lg p-6 w-1/2">
             <h3 class="text-lg font-semibold mb-4">新しい記録項目を追加</h3>
@@ -154,20 +79,7 @@
             <label for="new-item-title" class="block text-gray-700 text-base font-bold mb-2">タイトル</label>
             <input type="text" id="new-item-title" name="title" class="border border-gray-300 rounded-md w-full px-3 py-2 mb-4" placeholder="タイトルを入力" maxlength="32">
 
-            <!-- @if(isset($facility)) -->
-                <input type="hidden" name="facility_id" value="{{ $facility->id }}">
-            <!-- @else -->
-                <!-- <label for="facility_id" class="block text-gray-700 text-base font-bold mb-2">施設</label>
-                <select name="facility_id" id="facility_id" class="border border-gray-300 rounded-md w-full px-3 py-2 mb-4" required>
-                    <option value="">施設を選択してください</option>
-                    @foreach($person->people_facilities as $facility)
-                        <option value="{{ $facility->id }}">{{ $facility->name }}</option>
-                    @endforeach
-                </select>
-                @error('facility_id')
-                    <p class="text-red-500 text-base mt-2">{{ $message }}</p>
-                @enderror
-            @endif -->
+          
 
             <!-- 項目入力フィールドのコンテナ -->
             <div id="item-fields-container">
@@ -209,8 +121,6 @@
         </div>
     </div>
     </form>
-
-    <!-- JavaScriptで動的に項目を追加 -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -256,83 +166,8 @@
             // モーダルを開くボタンのイベントリスナー
             openModalButton.addEventListener('click', openModal);
 
-            // モーダルを閉じるボタンのイベントリスナー
-            closeModalButton.addEventListener('click', closeModal);
-
-            // 項目入力フィールドを追加する関数
-            function addItemField() {
-                const itemFieldHTML = `
-                    <div class="item-field mb-2">
-                        <input type="text" name="item[]" class="border border-gray-300 rounded-md w-full px-3 py-2" placeholder="項目を入力" maxlength="32">
-                    </div>
-                `;
-                itemFieldsContainer.insertAdjacentHTML('beforeend', itemFieldHTML);
-            }
-
-            // 「＋」ボタンのイベントリスナー
-            addItemFieldButton.addEventListener('click', addItemField);
-
-            // フォームを送信する関数を修正
-        function submitForm(formData) {
-        // APIエンドポイントを '/options' に変更
-        axios.post('/options', formData, {
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => {
-            // 成功メッセージの表示
-            alert(response.data.message);
-
-            // ページをリロードして最新の状態を取得
-            window.location.reload();
-        })
-        .catch(error => {
-            // エラーメッセージの表示
-            console.error(error);
-            formErrorMessage.classList.remove('hidden');
-            formErrorMessage.textContent = error.response?.data?.message || 'エラーが発生しました。再度お試しください。';
-        });
-    }
-    // 施設利用者全員に適用するボタン
-    const addToAllButtons = document.querySelectorAll('.add-to-all-btn');
-    addToAllButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
-            const itemId = this.getAttribute('data-item');
-            const facilityId = this.getAttribute('data-facility-id');
-            // alert(facilityId);
-            console.log('data-facility-id:', facilityId);
-            // Change button color to red
-            this.style.backgroundColor = 'red';
-            this.textContent = '全員に追加済';
-            this.disabled = true;
-
-            // Make API call to add item to all
-            axios.post('/api/add-item-to-all', {
-                item_id: itemId,
-                facility_id: facilityId
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(response => {
-                alert(response.data.message);
-            })
-            .catch(error => {
-                console.error(error);
-                alert('エラーが発生しました。再度お試しください。');
-                // Revert button changes if there's an error
-                this.style.backgroundColor = '';
-                this.textContent = '全員に追加';
-                this.disabled = false;
-            });
-        });
-    });
-
-            // 新しい項目を追加するボタンのイベントリスナー
+            // モーダルを閉じ
+    // 新しい項目を追加するボタンのイベントリスナー
             confirmAddItemButton.addEventListener('click', function() {
                 const newItemTitle = newItemTitleInput.value.trim();
                 const newItemInputs = document.getElementsByName('item[]');

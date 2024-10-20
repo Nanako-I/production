@@ -51,7 +51,17 @@ class PersonController extends Controller
 
         $firstFacility = $facilities->first();
         if ($firstFacility) {
-            $people = $firstFacility->people_facilities()->get();
+            // 本日の日付を取得
+        $today = \Carbon\Carbon::now()->toDateString();
+
+        // 本日訪問予定がある人物のみを取得
+        $people = $firstFacility->people_facilities()
+        ->with('scheduled_visits') // リレーションを事前にロード
+            ->whereHas('scheduled_visits', function($query) use ($today) {
+                $query->whereDate('arrival_datetime', $today)
+                      ->orWhereDate('exit_datetime', $today);
+            })
+            ->get();
         } else {
             $people = []; // まだpeople（利用者が登録されていない時もエラーが出ないようにする）
         }
@@ -72,7 +82,11 @@ class PersonController extends Controller
         foreach ($people as $person) {
             $selectedItems[$person->id] = json_decode($person->selected_items, true) ?? [];
         }
-        
+        // dd($selectedItems);
+        // Loop through each person and decode their selected items
+        // foreach ($people as $person) {
+        //     $selectedItems[$person->id] = json_decode($person->selected_items, true) ?? [];
+        // }
         $today = \Carbon\Carbon::now()->toDateString();
 
         foreach ($people as $person) {
@@ -93,10 +107,11 @@ class PersonController extends Controller
         // dd($options);
 
         // 各利用者の訪問データを取得して送迎の要否を確認
-        // foreach ($people as $person) {
-        //     $scheduledVisit = ScheduledVisit::where('people_id', $person->id)->first();
-        //     $person->transport = $scheduledVisit ? $scheduledVisit->transport : '未登録';
-        // }
+        foreach ($people as $person) {
+            $scheduledVisit = ScheduledVisit::where('people_id', $person->id)->first();
+            $person->transport = $scheduledVisit ? $scheduledVisit->transport : '未登録';
+        }
+        // dd($person->id, array_keys($selectedItems));
 
     return view('people', compact('people', 'selectedItems', 'options', 'personOptions'));
     }
@@ -207,7 +222,7 @@ class PersonController extends Controller
     }
 
     return view('peoplelist', compact('people'));
-
+}
     public function create()
     {
         return view('peopleregister');
@@ -455,31 +470,21 @@ class PersonController extends Controller
     public function showSelectedItems($people_id, $id)
 {
     $person = Person::findOrFail($id);
+    $facility = $person->people_facilities()->first();
     $selectedItems = json_decode($person->selected_items, true) ?? [];
     
-    // options テーブルから追加項目を取得
-    $options = Option::where('people_id', $people_id)
-        ->get(['title', 'item1', 'item2', 'item3', 'item4', 'item5']);
+    $options = Option::where('people_id', $id)->get();
     
-    $additionalItems = [];
+    $additionalItems = $options->map(function ($option) {
+        return [
+            'id' => $option->id,
+            'title' => $option->title,
+            'items' => $option->getItemsAsString(),
+        ];
+    })->toArray();
 
-    foreach ($options as $option) {
-        $items = collect([$option->item1, $option->item2, $option->item3, $option->item4, $option->item5])
-            ->filter()
-            ->implode(', '); // NULL 以外の値をカンマ区切りで結合
-
-        if ($items) {
-            $additionalItems[] = [
-                'title' => $option->title,
-                'items' => $items,
-            ];
-        }
-    }
-
-    return view('select_item', compact('person', 'selectedItems', 'additionalItems', 'id'));
+    return view('select_item', compact('person', 'facility', 'selectedItems', 'additionalItems', 'id'));
 }
-
-
 
 public function updateSelectedItems(Request $request, $id)  
 {
@@ -530,15 +535,9 @@ public function updateSelectedItems(Request $request, $id)
     return redirect()->route('people.index', $person->id)->with('success', '記録項目が更新されました。');
 }
 
-
-
 // 新しく項目を追加するメソッド
 private function getAdditionalItems($id)
 {
-    // ここで追加の項目を取得するロジックを実装します
-    // 例えば、データベースから取得したり、他のソースから情報を集めたりします
-
-    // 仮の実装例：
     $person = Person::findOrFail($id);
     $options = Option::where('people_id', $id)->get();
 
@@ -553,14 +552,86 @@ private function getAdditionalItems($id)
         }
         
         $additionalItems[] = [
+            'id' => $option->id,
             'title' => $option->title,
-            'items' => implode(', ', $items)
+            'items' => implode(', ', $items),
+            'facility_id' => $option->facility_id
         ];
     }
 
     return $additionalItems;
 }
 
+public function showAddItemForm($id)
+{
+    $facility = Facility::findOrFail($id);
+    return view('item', compact('facility', 'id'));
+}
+
+// selected-itemビューで施設利用者全員に記録項目を追加させるボタン
+
+// private function addItemToAll(Request $request)
+// {
+//     $person = Person::findOrFail($id);
+//     dd($person);
+//     $options = Option::where('people_id', $id)->get();
+//     $people = Person::where('facility_id', $facilityId)->get();
+
+//     $additionalItems = [];
+//     foreach ($options as $option) {
+//         $items = [];
+//         for ($i = 1; $i <= 5; $i++) {
+//             $itemKey = "item{$i}";
+//             if (!is_null($option->$itemKey) && $option->$itemKey !== '') {
+//                 $items[] = $option->$itemKey;
+//             }
+//         }
+        
+//         $additionalItems[] = [
+//             'id' => $option->id,
+//             'title' => $option->title,
+//             'items' => implode(', ', $items),
+//             'facility_id' => $option->facility_id
+//         ];
+//     }
+
+//     return $additionalItems;
+// }
+
+
+
+
+public function addItemToAll($people_id)
+{
+    try {
+        $itemId = $request->input('item_id');
+        // itemIdに基づいてOptionを取得
+    $option = Option::find($itemId);
+    
+    // タイトルが存在する場合は取得し、存在しない場合はnullを返す
+    $itemTitle = $option ? $option->title : null;
+
+        dd($request->all());
+
+        $facilityId = $request->input('facility_id');
+        dd($facilityId);
+        $people = Person::where('facility_id', $facilityId)->get();
+
+        foreach ($people as $person) {
+            $selectedItems = json_decode($person->selected_items, true) ?? [];
+            if (!in_array($itemId, $selectedItems)) {
+                $selectedItems[] = $itemId;
+                $person->selected_items = json_encode(array_unique($selectedItems), JSON_UNESCAPED_UNICODE);
+                $person->save();
+            }
+        }
+
+        return response()->json(['message' => '項目が全ての利用者に追加されました。']);
+    } catch (\Exception $e) {
+        \Log::error('Error in addItemToAll: ' . $e->getMessage());
+        return response()->json(['error' => 'エラーが発生しました。再度お試しください。'], 500);
+    }
+}
 
 
 
