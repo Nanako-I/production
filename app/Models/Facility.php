@@ -39,6 +39,11 @@ class Facility extends Model
     public function medicalCareNeeds()
 {
     return $this->belongsToMany(MedicalCareNeed::class, 'medical_care_facilities', 'facility_id', 'medical_care_need_id');
+<<<<<<< HEAD
+}
+    
+=======
+>>>>>>> new-branch
 }
     
 }

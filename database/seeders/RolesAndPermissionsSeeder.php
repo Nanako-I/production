@@ -11,6 +11,11 @@ use App\Models\Permission;
 use App\Models\User;
 use App\Models\Person;
 use App\Models\MedicalCareNeed;
+<<<<<<< HEAD
+=======
+use App\Models\ScheduledVisit;
+
+>>>>>>> new-branch
 
 
 class RolesAndPermissionsSeeder extends Seeder
@@ -67,7 +72,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 PermissionType::ReadClientFamily,
             ],
         ];
-        
+
         foreach ($rolesAndPermissions as $roleName => $permissions) {
             if (!Role::where('name', $roleName)->where('guard_name', 'web')->exists()) {
                 $role = Role::create(['name' => $roleName, 'guard_name' => 'web']);
@@ -115,10 +120,14 @@ class RolesAndPermissionsSeeder extends Seeder
         $familyAdminUser->password = \Hash::make('Password1234');
         $familyAdminUser->save();
         $familyAdminUser->assignRole(RoleEnums::ClientFamilyUser);
-        
-        
+
+
         // 家族花子の子ども（施設利用者）を作成
+<<<<<<< HEAD
          // 家族花子の子ども（施設利用者）を作成 
+=======
+         // 家族花子の子ども（施設利用者）を作成
+>>>>>>> new-branch
          if (!Person::where('last_name', '利用者')->where('first_name', '二郎')->exists()) {
             $person = new Person();
             $person->last_name = '利用者';
@@ -130,16 +139,51 @@ class RolesAndPermissionsSeeder extends Seeder
             $person->jukyuusha_number = '1234567890';
             $person->save();
         }
+<<<<<<< HEAD
        
         
+=======
+
+        // 利用者二郎の来訪日登録
+        if (!ScheduledVisit::where('people_id', $person->id)
+        ->where('arrival_datetime', '2024-10-07 09:30:00') // Adjusted arrival time
+        ->exists()) {
+        $scheduledVisit = new ScheduledVisit();
+        $scheduledVisit->people_id = $person->id; // 利用者二郎のIDを使用
+        $scheduledVisit->arrival_datetime = '2024-10-07 09:30:00'; // 来訪予定日 (迎え予定時間)
+        $scheduledVisit->exit_datetime = '2024-10-07 12:30:00'; // 退館予定日 (送り予定時間)
+        $scheduledVisit->visit_type_id = 1; // 仮の訪問タイプID
+        $scheduledVisit->notes = '特記事項なし';
+        $scheduledVisit->pick_up = '必要'; // 迎えの要否
+        $scheduledVisit->drop_off = '必要'; // 送りの要否
+        $scheduledVisit->pick_up_time = '2024-10-07 09:30:00'; // 迎え予定時間
+        $scheduledVisit->drop_off_time = '2024-10-07 12:30:00'; // 送り予定時間
+        $scheduledVisit->save();
+
+        echo "Scheduled visit for {$person->first_name} added with pick-up and drop-off details.\n"; // 確認のための出力
+        }
+
+
+
+
+
+>>>>>>> new-branch
         // 上記で作成したテスト施設と利用者を紐づけ
         $person->people_facilities()->attach($facility->id);
-        
+
         // 家族花子と利用者二郎を紐づけ
         $familyAdminUser->people_family()->attach($person->id);
+<<<<<<< HEAD
         
         }
         }
         }
     }
 
+=======
+
+        }
+        }
+        }
+    }
+>>>>>>> new-branch

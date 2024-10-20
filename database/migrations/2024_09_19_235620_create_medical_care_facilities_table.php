@@ -36,4 +36,8 @@ return new class extends Migration
     {
         Schema::dropIfExists('medical_care_facilities');
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> new-branch

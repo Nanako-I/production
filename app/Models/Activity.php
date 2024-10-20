@@ -16,4 +16,8 @@ class Activity extends Model
     {
         return $this->belongsTo(Person::class, 'people_id');
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> new-branch

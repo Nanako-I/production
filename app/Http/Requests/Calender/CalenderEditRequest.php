@@ -31,10 +31,13 @@ class CalenderEditRequest extends FormRequest
     public function rules()
     {
         return [
+            'scheduled_visit_id' => ['required', 'integer', 'exists:scheduled_visits,id'], // 追加
             'people_id' => ['required', 'integer'],
             'visit_type_id' => ['nullable', 'integer'],
             'arrival_datetime' => ['nullable', 'date_format:Y-m-d H:i:s'],
             'exit_datetime' => ['nullable', 'date_format:Y-m-d H:i:s'],
+            'pick_up' => ['required', 'in:必要,不要'], 
+            'drop_off' => ['required', 'in:必要,不要'],
             'notes' => ['nullable', 'text'],
         ];
     }
@@ -61,10 +64,19 @@ class CalenderEditRequest extends FormRequest
     public static function getOnlyRequest($request)
     {
         $array = $request->only([
+            'scheduled_visit_id', // この行を追加
             'people_id',
             'visit_type_id',
             'arrival_datetime',
             'exit_datetime',
+            'pick_up',
+            'drop_off',
+            'pick_up_time',
+            'drop_off_time',
+            'pick_up_staff',
+            'drop_off_staff',
+            'pick_up_bus',
+            'drop_off_bus',
             'notes'
         ]);
 

@@ -31,4 +31,8 @@ class ChangeJukyuushaNumberToBigintInPeopleTable extends Migration
             $table->integer('jukyuusha_number')->unsigned()->change();
         });
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> new-branch

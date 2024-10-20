@@ -64,14 +64,21 @@
                 @hasanyrole('super administrator|facility staff administrator|facility staff user|facility staff reader')
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex {{ request()->is('people') ?  ' text-black' : '' }} px-4 py-2 rounded-md text-3xl font-bold max-w-4xl text-black">
                         <x-nav-link :href="url('people')" :active="request()->is('people')">
-                        {{ __('利用者一覧') }}
+                        {{ __('今日の利用者') }}
+                        </x-nav-link>
+                    </div>
+
+                    <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex {{ request()->is('peoplelist') ? ' text-black' : '' }} px-4 rounded-md text-xl font-bold items-center justify-center">
+                         <!--<i class="material-icons md-48" id="face">face</i>-->
+                         <x-nav-link :href="url('/peoplelist')" :active="request()->is('peoplelist')">
+                            {{ __('利用者一覧') }}
                         </x-nav-link>
                     </div>
                     
                       <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex {{ request()->is('peopleregister') ? ' text-black' : '' }} px-4 rounded-md text-xl font-bold items-center justify-center">
                          <!--<i class="material-icons md-48" id="face">face</i>-->
                          <x-nav-link :href="url('peopleregister')" :active="request()->is('peopleregister')">
-                            {{ __('新規登録') }}
+                            {{ __('新規の利用者登録') }}
                         </x-nav-link>
                     </div>
                     
@@ -141,11 +148,30 @@
 
                 @hasanyrole('super administrator|facility staff administrator|facility staff user|facility staff reader')
                 <x-dropdown-link :href="url('people')" class="text-lg">
+<<<<<<< HEAD
+=======
+                    {{ __('今日の利用者') }}
+                </x-dropdown-link>
+
+                <x-dropdown-link :href="url('peoplelist')" class="text-lg">
+>>>>>>> new-branch
                     {{ __('利用者一覧') }}
                 </x-dropdown-link>
 
                 <x-dropdown-link :href="url('peopleregister')" class="text-lg">
+<<<<<<< HEAD
                     {{ __('新規登録') }}
+=======
+                    {{ __('新規の利用者登録') }}
+                </x-dropdown-link>
+
+                <x-dropdown-link :href="url('peopleregister')" class="text-lg">
+                    {{ __('職員・保護者を招待する') }}
+                </x-dropdown-link>
+
+                <x-dropdown-link :href="url('calendar')" class="text-lg">
+                    {{ __('カレンダー') }}
+>>>>>>> new-branch
                 </x-dropdown-link>
                 @endhasanyrole
 

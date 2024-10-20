@@ -5,19 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Lifestyle extends Model
+class OptionItem extends Model
 {
     use HasFactory;
-    protected $table = 'lifestyles';
+    protected $table = 'option_items';
     
-    protected $fillable = ['people_id','baggage','clean','other','bikou'];
+    protected $fillable = ['people_id','option_id','item1','item2','item3','item4','item5','bikou'];
     
+    public function option()
+    {
+        return $this->belongsTo(Option::class);
+    }
+
     public function person()
     {
         return $this->belongsTo(Person::class, 'people_id');
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> new-branch

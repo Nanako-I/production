@@ -29,4 +29,8 @@ return new class extends Migration
             $table->string('guard_name')->change();
         });
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> new-branch

@@ -40,5 +40,9 @@
             </form>
         </div>
     </div>
+<<<<<<< HEAD
 </x-app-layout>
 
+=======
+</x-app-layout>
+>>>>>>> new-branch

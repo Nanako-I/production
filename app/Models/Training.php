@@ -14,4 +14,8 @@ public function person()
     {
         return $this->belongsTo(Person::class, 'people_id');
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> new-branch

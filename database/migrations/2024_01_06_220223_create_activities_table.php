@@ -40,4 +40,8 @@ return new class extends Migration
     {
         Schema::dropIfExists('activities');
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> new-branch

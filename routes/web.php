@@ -27,6 +27,8 @@ use App\Http\Controllers\HogoshaUserController;
 use App\Http\Controllers\URLController;
 use App\Http\Controllers\BeforeInvitationController;//管理者が職員のIDを入力するためにfacility_idを取って画面遷移させるコントローラー
 use App\Http\Controllers\CustomIDController;//管理者が職員のIDを登録するコントローラー
+use App\Http\Controllers\OptionController;//記録項目を追加するためのコントローラー
+use App\Http\Controllers\OptionItemController;//追加した記録項目に登録するためのコントローラー
 use App\Http\Controllers\TimeController;//利用時間を登録するコントローラー
 use App\Http\Controllers\PhotoController;
 
@@ -233,6 +235,12 @@ Route::post('/staffregister',[StaffUserController::class,'register']);
 Route::get('peopleregister', [PersonController::class, 'create']);
 Route::post('peopleregister', [PersonController::class, 'store']);
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> new-branch
 // 利用時間↓
 Route::post('times/{people_id}', [TimeController::class, 'store'])->name('time.store');
 Route::get('times/{people_id}', [TimeController::class, 'show'])->name('time.show');
@@ -245,10 +253,44 @@ Route::post('timechange/{people_id}/{id}',[TimeController::class,'update'])->nam
 
 Route::resource('people', PersonController::class);
 
+<<<<<<< HEAD
 // 登録項目選択
 Route::get('/selected-item/{people_id}', [PersonController::class, 'showSelectedItems'])->name('show.selected.items');
 Route::patch('/selected-item/{people_id}', [PersonController::class, 'updateSelectedItems'])->name('update.selected.items');
 
+=======
+// 利用者全員のリスト
+Route::get('/peoplelist', [PersonController::class, 'list'])->name('people.list');
+
+
+// 登録項目選択
+Route::get('/selected-item/{people_id}/{id}', [PersonController::class, 'showSelectedItems'])->name('show.selected.items');
+Route::patch('/selected-item/{people_id}', [PersonController::class, 'updateSelectedItems'])->name('update.selected.items');
+
+// 施設の全利用者に記録項目を適用
+Route::get('/item/{id}', [PersonController::class, 'showAddItemForm'])->name('show.items');
+Route::post('/item/{facility}/{id}', [OptionController::class, 'itemstore'])->name('addItem.store');
+Route::post('/item/all', [PersonController::class, 'addItemToAll'])->name('addItemToAll');
+
+// 記録項目の表示
+// Route::get('/people/{id}', [OptionController::class, 'show'])->name('people.show');
+
+// 記録項目の追加
+Route::post('/selected-item/{people_id}/{id}', [OptionController::class, 'store'])->name('options.store');
+
+// Route::post('/selected-item/{people_id}', [OptionController::class, 'store'])->name('options.store');
+
+
+// 記録項目をpeopleビューで登録
+Route::post('/options-item/{people_id}/{id}', [OptionItemController::class, 'store'])->name('options.item.store');
+
+// 記録項目の登録済内容の編集
+Route::get('optionchange/{people_id}/{id}', [OptionItemController::class, 'change'])->name('options.item.change');
+// Route::post('optionchange/{people_id}/{id}',[OptionItemController::class,'update'])->name('options.item.update');
+// Route::post('optionchange/{people_id}/{id}', [OptionItemController::class, 'update'])->name('options.item.update');
+Route::patch('optionchange/{people_id}/{id}', [OptionItemController::class, 'update'])->name('options.item.update');
+
+>>>>>>> new-branch
 Route::post('/logout', 'Auth\LoginController@logout')->name('logout');
 // Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 

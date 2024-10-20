@@ -22,6 +22,14 @@ return new class extends Migration
             $table->unsignedBigInteger('visit_type_id');
             $table->foreign('visit_type_id')->references('id')->on('visit_types')->onDelete('cascade');
             $table->text('notes')->nullable();
+            $table->string('pick_up')->nullable(); // 迎えの要否のカラムを追加
+            $table->string('drop_off')->nullable(); // 送りの要否のカラムを追加
+            $table->dateTime('pick_up_time')->nullable(); // 迎え予定時間
+            $table->dateTime('drop_off_time')->nullable(); // 送り予定時間
+            $table->string('pick_up_staff')->nullable(); // 迎え担当者名
+            $table->string('drop_off_staff')->nullable(); // 送り担当者名
+            $table->string('pick_up_bus')->nullable(); // 迎えバス名
+            $table->string('drop_off_bus')->nullable(); // 送りバス名
             $table->timestamps();
         });
     }

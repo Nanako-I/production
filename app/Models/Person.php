@@ -48,6 +48,26 @@ class Person extends Model
         'selected_items' => 'array',
     ];
     
+<<<<<<< HEAD
+=======
+    // 記録項目作成↓
+    public function options()
+    {
+        return $this->hasMany(Option::class,'people_id');
+    }
+
+    // 記録項目追加↓
+    public function option_items()
+    {
+        return $this->hasMany(OptionItem::class, 'people_id');
+    }
+
+    public function scheduled_visits()
+    {
+        return $this->hasMany(ScheduledVisit::class, 'people_id');
+    }
+
+>>>>>>> new-branch
 // 体温一覧リスト↓
     public function temperatures()
     {

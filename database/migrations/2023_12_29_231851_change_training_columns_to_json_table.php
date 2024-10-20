@@ -38,4 +38,8 @@ class ChangeTrainingColumnsToJsonTable extends Migration
             //
         });
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> new-branch

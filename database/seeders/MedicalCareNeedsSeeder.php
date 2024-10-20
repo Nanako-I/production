@@ -23,4 +23,8 @@ class MedicalCareNeedsSeeder extends Seeder
         ]);
         
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> new-branch

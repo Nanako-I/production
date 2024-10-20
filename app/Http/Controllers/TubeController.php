@@ -253,4 +253,8 @@ public function change(Request $request, $people_id, $id)
             return redirect()->route('people.index')->with('success', '削除が完了しました。');
         }
         
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> new-branch

@@ -29,4 +29,8 @@ return new class extends Migration
             $table->dropColumn('selected_items');
         });
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> new-branch

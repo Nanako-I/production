@@ -13,6 +13,11 @@
     <!-- バリデーションエラーの表示 -->
     @if ($errors->any())
         <div class="flex justify-between p-4 items-center bg-red-500 text-white rounded-lg border-2 border-white">
+<<<<<<< HEAD
+=======
+
+        
+>>>>>>> new-branch
             @if ($errors->has('name') || $errors->has('date_of_birth'))
                 <div><strong>氏名・生年月日は入力必須です。</strong></div> 
             @endif
@@ -28,13 +33,32 @@
     @endif
 
     <body class="h-full w-full">
+<<<<<<< HEAD
 
+=======
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <script src="https://kit.fontawesome.com/de653d534a.js" crossorigin="anonymous"></script>
+    <div class="flex justify-end "> 
+              <div class="flex-col"> 
+                <p class="font-bold text-lg">連絡帳</p>
+                <a href="{{ url('record/'.$person->id.'/edit') }}" class="relative ml-2" style="display: flex; align-items: center;">
+                    <i class="fa-regular fa-clipboard text-slate-600 hover:text-slate-900 icon-container mr-5 " style="font-size: 3em; padding: 0 5px; transition: transform 0.2s;"></i>
+                    @csrf
+                  </a>
+              </div> 
+      </div> 
+>>>>>>> new-branch
     <!-- 修正フォーム -->
     <form action="{{ route('people.update', $person->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PATCH')
 
     <div style="display: flex; align-items: center; justify-content: center; flex-direction: column;">
+<<<<<<< HEAD
+=======
+
+    
+>>>>>>> new-branch
         <div class="form-group mb-4 m-2 w-1/2 max-w-md md:w-1/6" style="display: flex; flex-direction: column; align-items: center;">
             <label class="block text-lg font-bold text-gray-700">名前</label>
             <input name="last_name" type="text" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm text-xl font-bold border-gray-300 rounded-md" value="{{ old('last_name', $person->last_name) }}"placeholder="姓">
@@ -85,4 +109,8 @@
     </form>
 
     </body>
+<<<<<<< HEAD
 </x-app-layout>
+=======
+</x-app-layout>
+>>>>>>> new-branch

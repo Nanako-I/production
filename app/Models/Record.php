@@ -10,4 +10,8 @@ class Record extends Model
     use HasFactory;
 
     protected $fillable = ['person_id', 'hanko_name', 'kiroku_date'];
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> new-branch
